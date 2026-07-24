@@ -1,0 +1,169 @@
+---
+/**
+ * Poptávkový formulář (Web3Forms) — hlavní konverzní prvek.
+ * - odesílá fetchem, úspěch/chybu hlásí přímo ve formuláři
+ * - honeypot pole `botcheck` proti spamu
+ * - ⚠️ vyžaduje platný klíč v src/data/site.ts (web3formsKey)
+ */
+import { site } from '../data/site';
+import { services } from '../data/services';
+
+interface Props {
+  /** Rozliší zdroj poptávky v notifikačním e-mailu */
+  source?: string;
+  class?: string;
+}
+
+const { source = 'web', class: className } = Astro.props;
+const formId = `lead-${source}`;
+---
+
+<form class:list={['lead', className]} id={formId} action="https://api.web3forms.com/submit" method="POST" novalidate>
+  <input type="hidden" name="access_key" value={site.web3formsKey} />
+  <input type="hidden" name="subject" value={`Nová poptávka z webu ARTSOME (${source})`} />
+  <input type="hidden" name="from_name" value="ARTSOME web" />
+  <input type="checkbox" name="botcheck" class="visually-hidden" tabindex="-1" autocomplete="off" />
+
+  <div class="lead__field">
+    <label for={`${formId}-name`}>Jméno a příjmení <span aria-hidden="true">*</span></label>
+    <input type="text" id={`${formId}-name`} name="name" placeholder="Vaše jméno" required autocomplete="name" />
+  </div>
+
+  <div class="lead__field">
+    <label for={`${formId}-phone`}>Telefon <span aria-hidden="true">*</span></label>
+    <input type="tel" id={`${formId}-phone`} name="phone" placeholder="+420 …" required autocomplete="tel" />
+  </div>
+
+  <div class="lead__field">
+    <label for={`${formId}-type`}>Co potřebujete?</label>
+    <select id={`${formId}-type`} name="type">
+      <option value="">— vyberte —</option>
+      {services.map((s) => (
+        <option value={s.title}>{s.title}</option>
+      ))}
+      <option value="Jiné / nevím">Jiné / nevím</option>
+    </select>
+  </div>
+
+  <div class="lead__field">
+    <label for={`${formId}-message`}>Zpráva</label>
+    <textarea
+      id={`${formId}-message`}
+      name="message"
+      rows="4"
+      placeholder="Např. výmalba bytu 3+1, cca 70 m², bílá barva…"></textarea>
+  </div>
+
+  <button type="submit" class="lead__submit">Odeslat poptávku</button>
+
+  <p class="lead__note" data-note>Ozveme se do 24 hodin. Bez závazků.</p>
+  <p class="lead__status lead__status--ok" data-ok hidden>
+    ✓ Děkujeme! Poptávka je na cestě — ozveme se do 24 hodin.
+  </p>
+  <p class="lead__status lead__status--err" data-err hidden>
+    Odeslání se nepovedlo. Zavolejte nám prosím na <a href={site.phoneHref}>{site.phone}</a>.
+  </p>
+</form>
+
+<script>
+  for (const form of document.querySelectorAll<HTMLFormElement>('.lead')) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!form.reportValidity()) return;
+
+      const submit = form.querySelector<HTMLButtonElement>('.lead__submit')!;
+      const ok = form.querySelector<HTMLElement>('[data-ok]')!;
+      const err = form.querySelector<HTMLElement>('[data-err]')!;
+      ok.hidden = err.hidden = true;
+      submit.disabled = true;
+      submit.textContent = 'Odesílám…';
+
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' },
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        form.reset();
+        ok.hidden = false;
+      } catch {
+        err.hidden = false;
+      } finally {
+        submit.disabled = false;
+        submit.textContent = 'Odeslat poptávku';
+      }
+    });
+  }
+</script>
+
+<style>
+  .lead { display: grid; gap: var(--sp-4); }
+
+  .lead__field { display: grid; gap: .4rem; }
+
+  .lead__field label {
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: .92rem;
+    color: var(--blue-ink);
+  }
+
+  .lead__field label span { color: var(--accent); }
+
+  .lead__field input,
+  .lead__field select,
+  .lead__field textarea {
+    font: inherit;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1.5px solid var(--blue-line);
+    border-radius: var(--radius-sm);
+    padding: .8rem 1rem;
+    width: 100%;
+    transition: border-color .2s, box-shadow .2s;
+  }
+
+  .lead__field textarea { resize: vertical; }
+
+  .lead__field input:focus,
+  .lead__field select:focus,
+  .lead__field textarea:focus {
+    outline: none;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px var(--blue-soft);
+  }
+
+  .lead__submit {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 1rem;
+    color: #fff;
+    background: var(--blue);
+    border: 0;
+    border-radius: var(--radius-pill);
+    padding: 1rem 1.5rem;
+    box-shadow: 0 8px 22px -8px rgba(31, 43, 191, .7);
+    transition: background .2s, transform .25s var(--ease);
+  }
+
+  .lead__submit:hover { background: var(--blue-deep); transform: translateY(-2px); }
+  .lead__submit:disabled { opacity: .7; transform: none; }
+
+  .lead__note {
+    text-align: center;
+    font-size: .85rem;
+    color: var(--ink-soft);
+  }
+
+  .lead__status {
+    text-align: center;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    padding: .8rem 1rem;
+  }
+
+  .lead__status--ok { background: #e7f6ee; color: var(--ok); }
+  .lead__status--err { background: #fdecea; color: #c0392b; }
+  .lead__status--err a { text-decoration: underline; }
+</style>

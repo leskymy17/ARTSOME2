@@ -1,0 +1,74 @@
+---
+/**
+ * Modrý CTA pás — telefon + odkaz na poptávku. Používá se před patičkou
+ * na stránkách, které nekončí formulářem.
+ */
+import { site } from '../data/site';
+import Icon from './Icon.astro';
+import Button from './Button.astro';
+
+interface Props {
+  title?: string;
+  text?: string;
+}
+
+const {
+  title = 'Domluvíme schůzku a kalkulaci zdarma',
+  text = 'Napište nebo zavolejte — ozveme se obvykle do 24 hodin a vypracujeme nezávaznou cenovou nabídku.',
+} = Astro.props;
+---
+
+<section class="cta">
+  <div class="wrap cta__inner">
+    <h2 class="cta__title">{title}</h2>
+    <p class="cta__text">{text}</p>
+    <div class="cta__actions">
+      <Button href={site.phoneHref} variant="light">
+        <Icon name="phone" /> {site.phone}
+      </Button>
+      <Button href="/kontakt/" variant="inverse">Nezávazná poptávka</Button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta {
+    position: relative;
+    background: var(--blue);
+    color: #fff;
+    padding-block: var(--sp-16);
+    overflow: hidden;
+  }
+
+  .cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(90% 90% at 80% 0%, rgba(255, 255, 255, .12), transparent 55%);
+    pointer-events: none;
+  }
+
+  .cta__inner {
+    position: relative;
+    text-align: center;
+    max-width: 720px;
+  }
+
+  .cta__title {
+    font-size: var(--h2);
+    color: #fff;
+    margin-bottom: var(--sp-3);
+  }
+
+  .cta__text {
+    color: rgba(255, 255, 255, .85);
+    margin-bottom: var(--sp-8);
+  }
+
+  .cta__actions {
+    display: flex;
+    justify-content: center;
+    gap: var(--sp-4);
+    flex-wrap: wrap;
+  }
+</style>

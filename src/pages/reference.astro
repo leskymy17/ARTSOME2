@@ -1,0 +1,104 @@
+---
+/**
+ * Reference — filtrovaná galerie, případová studie s before/after
+ * sliderem a CTA.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import SectionHead from '../components/SectionHead.astro';
+import GalleryGrid from '../components/GalleryGrid.astro';
+import BeforeAfterSlider from '../components/BeforeAfterSlider.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { caseStudy } from '../data/gallery';
+---
+
+<BaseLayout
+  title="Reference — ARTSOME | Malířství, nátěry a renovace"
+  description="Fotogalerie realizací ARTSOME s.r.o. — malování, nátěry, renovace dřeva a pokládka podlah v Moravskoslezském kraji. Reálné fotky, žádný stock."
+>
+  <PageHero title="Reference" crumbs={[{ label: 'Reference' }]}>
+    Reálné fotky z realizací po celém Moravskoslezském kraji. Malování, nátěry,
+    renovace i kompletní rekonstrukce — žádný stock, jen odvedená práce.
+  </PageHero>
+
+  <section class="section">
+    <div class="wrap">
+      <GalleryGrid />
+    </div>
+  </section>
+
+  <!-- PŘÍPADOVÁ STUDIE -->
+  <section class="section section--dim" id="sklep-kancelar">
+    <div class="wrap">
+      <SectionHead kicker={caseStudy.kicker} title={caseStudy.title} center class="reveal">
+        {caseStudy.text} Přetáhněte táhlo a porovnejte sami.
+      </SectionHead>
+
+      <div class="case-sliders">
+        {caseStudy.pairs.map((pair) => (
+          <BeforeAfterSlider before={pair.before} after={pair.after} class="reveal" />
+        ))}
+      </div>
+
+      <dl class="case-facts reveal">
+        <div class="case-facts__item">
+          <dt>Rozsah</dt>
+          <dd>Nivelace, strop, rozvody, výmalba, podlaha</dd>
+        </div>
+        <div class="case-facts__item">
+          <dt>Výsledek</dt>
+          <dd>Ze sklepa plnohodnotná kancelář</dd>
+        </div>
+        <div class="case-facts__item">
+          <dt>Jedna parta</dt>
+          <dd>Celá zakázka bez koordinace více firem</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <CtaBand
+    title="Líbí se vám naše práce?"
+    text="Domluvíme schůzku a vypracujeme cenovou kalkulaci zdarma — obvykle se ozveme do 24 hodin."
+  />
+</BaseLayout>
+
+<style>
+  .case-sliders {
+    display: grid;
+    gap: var(--sp-8);
+    max-width: 900px;
+    margin-inline: auto;
+  }
+
+  .case-facts {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--sp-6);
+    max-width: 900px;
+    margin: var(--sp-8) auto 0;
+  }
+
+  .case-facts__item {
+    background: var(--paper);
+    border: 1px solid var(--blue-line);
+    border-radius: var(--radius-sm);
+    padding: var(--sp-4) var(--sp-6);
+  }
+
+  .case-facts__item dt {
+    font-family: var(--font-head);
+    font-size: .8rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: .3rem;
+  }
+
+  .case-facts__item dd { color: var(--ink-soft); font-size: .95rem; }
+
+  @media (max-width: 760px) {
+    .case-facts { grid-template-columns: 1fr; }
+  }
+</style>

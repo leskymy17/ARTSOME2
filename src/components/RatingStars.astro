@@ -1,0 +1,23 @@
+---
+/**
+ * Hvězdičky hodnocení (vizuální — číselná hodnota patří vedle do textu).
+ */
+interface Props {
+  /** Počet hvězd 0–5 (default 5) */
+  count?: number;
+  class?: string;
+}
+
+const { count = 5, class: className } = Astro.props;
+const stars = '★'.repeat(count) + '☆'.repeat(5 - count);
+---
+
+<span class:list={['stars', className]} aria-hidden="true">{stars}</span>
+
+<style>
+  .stars {
+    color: var(--star);
+    letter-spacing: 1px;
+    font-size: .95rem;
+  }
+</style>

@@ -1,0 +1,90 @@
+/* ============================================================
+   ARTSOME — globální styly
+   Reset, základní typografie a sdílené utility třídy.
+   Komponentové styly žijí v jednotlivých .astro souborech.
+   ============================================================ */
+
+@import './tokens.css';
+
+/* ---------- Reset ---------- */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: var(--ink);
+  background: var(--paper);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, .u-display {
+  font-family: var(--font-head);
+  line-height: 1.1;
+  letter-spacing: -.02em;
+  color: var(--blue-ink);
+  text-wrap: balance;
+}
+
+img { display: block; max-width: 100%; height: auto; }
+
+a { color: inherit; text-decoration: none; }
+
+button { font: inherit; cursor: pointer; }
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- Utility ---------- */
+.wrap {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.section {
+  padding-block: var(--sp-section);
+}
+
+.section--dim  { background: var(--paper-dim); }
+.section--blue { background: var(--blue); }
+
+/* Skrytí obsahu vizuálně, ne pro čtečky */
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  clip-path: inset(50%);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* Scroll-reveal animace (aktivuje ji skript v BaseLayout).
+   Skryté jsou prvky jen když běží JS (html.js) — bez JS zůstává vše vidět. */
+html.js .reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity .7s var(--ease), transform .7s var(--ease);
+}
+
+html.js .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.js .reveal { opacity: 1; transform: none; }
+}

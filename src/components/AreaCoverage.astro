@@ -1,0 +1,62 @@
+---
+/**
+ * Oblast působení — lokální SEO sekce s výčtem měst.
+ */
+import { site } from '../data/site';
+import SectionHead from './SectionHead.astro';
+import Icon from './Icon.astro';
+---
+
+<section class="area section section--dim" id="oblast">
+  <div class="wrap">
+    <SectionHead kicker="Kde působíme" title="Celý Moravskoslezský kraj" center class="reveal">
+      Sídlíme v Havířově a za prací vyjíždíme po celém kraji.
+      Cestu máme v ceně — žádné příplatky za dopravu v regionu.
+    </SectionHead>
+
+    <ul class="area__list reveal">
+      {site.areaServed.map((city) => (
+        <li class="area__city">
+          <Icon name="map-pin" size={16} />
+          {city}
+        </li>
+      ))}
+      <li class="area__city area__city--more">a další města v kraji</li>
+    </ul>
+  </div>
+</section>
+
+<style>
+  .area__list {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--sp-3);
+    max-width: 820px;
+    margin-inline: auto;
+  }
+
+  .area__city {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    background: var(--paper);
+    border: 1px solid var(--blue-line);
+    border-radius: var(--radius-pill);
+    padding: .55rem 1.1rem;
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: .92rem;
+    color: var(--blue-ink);
+  }
+
+  .area__city :global(svg) { color: var(--blue); }
+
+  .area__city--more {
+    background: transparent;
+    border-style: dashed;
+    color: var(--ink-soft);
+    font-weight: 500;
+  }
+</style>

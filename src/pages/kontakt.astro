@@ -1,0 +1,167 @@
+---
+/**
+ * Kontakt — formulář (hlavní konverzní bod), přímé kontakty a mapa.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import LeadForm from '../components/LeadForm.astro';
+import SectionHead from '../components/SectionHead.astro';
+import FaqAccordion from '../components/FaqAccordion.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../data/site';
+import { kontaktFaq } from '../data/faq';
+
+const mapQuery = encodeURIComponent(
+  `${site.address.street}, ${site.address.city} ${site.address.zip}`,
+);
+---
+
+<BaseLayout
+  title="Kontakt — ARTSOME | Malířství, nátěry a renovace"
+  description={`Kontaktujte ARTSOME s.r.o. — malířství, nátěry a renovace v Moravskoslezském kraji. Tel: ${site.phone}. Kalkulace zdarma do 24 hodin.`}
+>
+  <PageHero title="Pojďme se domluvit" crumbs={[{ label: 'Kontakt' }]}>
+    Zavolejte nebo napište. Domluvíme si nezávaznou schůzku a vypracujeme cenovou
+    kalkulaci zdarma — obvykle se ozveme do 24 hodin. Působíme po celém
+    Moravskoslezském kraji.
+  </PageHero>
+
+  <section class="section contact">
+    <div class="wrap contact__grid">
+      <!-- Formulář -->
+      <div class="contact__form reveal">
+        <h2 class="contact__form-title">Nezávazná poptávka</h2>
+        <p class="contact__form-lead">Vyplňte stručně, co potřebujete, a my se vám ozveme.</p>
+        <LeadForm source="kontakt" />
+      </div>
+
+      <!-- Přímé kontakty -->
+      <div class="contact__info">
+        <div class="contact__card reveal">
+          <h2>Rychlejší je zavolat</h2>
+          <a href={site.phoneHref} class="contact__phone">
+            <Icon name="phone" size={22} /> {site.phone}
+          </a>
+          <p class="contact__hours">Jsme tu pro vás od pondělí do pátku</p>
+          <a href={`mailto:${site.email}`} class="contact__mail">
+            <Icon name="mail" size={18} /> {site.email}
+          </a>
+        </div>
+
+        <div class="contact__card reveal">
+          <h2>Fakturační údaje</h2>
+          <address class="contact__address">
+            {site.name}<br />
+            {site.address.street}<br />
+            {site.address.city}, {site.address.zip}<br />
+            IČO: {site.ico}
+          </address>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAPA — plná šířka obsahu -->
+  <section class="section contact-map">
+    <div class="wrap">
+      <SectionHead kicker="Kde nás najdete" title="Havířov-Město a okolí" class="reveal" />
+      <div class="contact-map__frame reveal">
+        <iframe
+          src={`https://www.google.com/maps?q=${mapQuery}&output=embed`}
+          title={`Mapa — sídlo ${site.name}, ${site.address.city}`}
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          allowfullscreen
+        ></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section section--dim">
+    <div class="wrap">
+      <SectionHead kicker="Časté dotazy" title="Než nám zavoláte" center class="reveal" />
+      <FaqAccordion items={kontaktFaq} />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .contact__grid {
+    display: grid;
+    grid-template-columns: 1.1fr .9fr;
+    gap: var(--sp-12);
+    align-items: start;
+  }
+
+  .contact__form {
+    background: var(--paper);
+    border: 1px solid var(--blue-line);
+    border-radius: var(--radius);
+    padding: var(--sp-8);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .contact__form-title { font-size: 1.6rem; margin-bottom: var(--sp-2); }
+  .contact__form-lead { color: var(--ink-soft); margin-bottom: var(--sp-6); }
+
+  .contact__info { display: grid; gap: var(--sp-6); }
+
+  .contact__card {
+    background: var(--blue-soft);
+    border: 1px solid var(--blue-line);
+    border-radius: var(--radius);
+    padding: var(--sp-6);
+  }
+
+  .contact__card h2 { font-size: 1.15rem; margin-bottom: var(--sp-4); }
+
+  .contact__phone {
+    display: inline-flex;
+    align-items: center;
+    gap: .6rem;
+    font-family: var(--font-head);
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: var(--blue);
+  }
+
+  .contact__hours {
+    color: var(--ink-soft);
+    font-size: .9rem;
+    margin: .3rem 0 var(--sp-4);
+  }
+
+  .contact__mail {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    font-weight: 600;
+    color: var(--blue-ink);
+  }
+  .contact__mail:hover { color: var(--blue); }
+
+  .contact__address { font-style: normal; line-height: 1.8; color: var(--ink); }
+
+  /* ---- Mapa přes celou šířku obsahu ---- */
+  .contact-map { padding-top: 0; }
+
+  .contact-map__frame {
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--blue-line);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .contact-map__frame iframe {
+    display: block;
+    width: 100%;
+    height: 440px;
+    border: 0;
+  }
+
+  @media (max-width: 900px) {
+    .contact__grid { grid-template-columns: 1fr; gap: var(--sp-8); }
+    .contact-map__frame iframe { height: 320px; }
+  }
+</style>

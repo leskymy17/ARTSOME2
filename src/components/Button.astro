@@ -1,0 +1,73 @@
+---
+/**
+ * Tlačítko / CTA odkaz.
+ * variant: primary (modré) | ghost (obrys na světlém) | light (sklo na modrém)
+ *        | inverse (bílé na modrém pozadí)
+ */
+interface Props {
+  href: string;
+  variant?: 'primary' | 'ghost' | 'light' | 'inverse';
+  class?: string;
+}
+
+const { href, variant = 'primary', class: className } = Astro.props;
+---
+
+<a href={href} class:list={['btn', `btn--${variant}`, className]}>
+  <slot />
+</a>
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .55rem;
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: .98rem;
+    padding: .9rem 1.5rem;
+    border-radius: var(--radius-pill);
+    border: 0;
+    white-space: nowrap;
+    transition:
+      transform .25s var(--ease),
+      box-shadow .25s var(--ease),
+      background .2s,
+      border-color .2s;
+  }
+
+  .btn :global(svg) { width: 18px; height: 18px; }
+
+  .btn--primary {
+    background: var(--blue);
+    color: #fff;
+    box-shadow: 0 8px 22px -8px rgba(31, 43, 191, .7);
+  }
+  .btn--primary:hover {
+    background: var(--blue-deep);
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px -10px rgba(31, 43, 191, .85);
+  }
+
+  .btn--ghost {
+    background: var(--paper);
+    color: var(--blue);
+    border: 1.5px solid var(--blue-line);
+  }
+  .btn--ghost:hover { border-color: var(--blue); transform: translateY(-2px); }
+
+  .btn--light {
+    background: rgba(255, 255, 255, .14);
+    color: #fff;
+    border: 1.5px solid rgba(255, 255, 255, .4);
+    backdrop-filter: blur(6px);
+  }
+  .btn--light:hover { background: rgba(255, 255, 255, .24); transform: translateY(-2px); }
+
+  .btn--inverse {
+    background: #fff;
+    color: var(--blue);
+    box-shadow: 0 8px 22px -8px rgba(0, 0, 0, .35);
+  }
+  .btn--inverse:hover { transform: translateY(-2px); }
+</style>

@@ -1,0 +1,55 @@
+/* ============================================================
+   ARTSOME — design tokeny
+   Jediné místo, kde se mění barvy, typografie, spacing a tvary.
+   Převzato 1:1 z odsouhlaseného faceliftu, doplněno o --ok
+   (úspěšné stavy) a spacing škálu.
+   ============================================================ */
+
+:root {
+  /* ---- Barvy ---- */
+  --blue:       #1f2bbf;   /* primární — CTA, odkazy, hero pozadí */
+  --blue-deep:  #161c8f;   /* hover primárních prvků */
+  --blue-ink:   #0e1252;   /* nadpisy na světlém pozadí */
+  --blue-soft:  #eef0fb;   /* jemné podkladové plochy */
+  --blue-line:  #d9ddf6;   /* rámečky, oddělovače */
+  --accent:     #ff7a4d;   /* akcent — štítek „Po“, zvýraznění v hero */
+  --accent-soft:#ffd9c9;   /* zvýrazněné slovo v H1 na modré */
+  --paper:      #ffffff;
+  --paper-dim:  #f6f6f8;
+  --ink:        #15161c;   /* základní text */
+  --ink-soft:   #565a6e;   /* sekundární text */
+  --star:       #ffb400;   /* hvězdičky hodnocení */
+  --ok:         #1a9e5c;   /* úspěch — odeslaný formulář, fajfky */
+
+  /* ---- Typografie ---- */
+  --font-head: 'Sora Variable', 'Sora', sans-serif;
+  --font-body: 'Inter Variable', 'Inter', sans-serif;
+  --text-sm:   .9rem;
+  --text-base: 1rem;
+  --text-lg:   1.12rem;
+  --h1: clamp(2.1rem, 4.4vw, 3.5rem);
+  --h2: clamp(1.65rem, 3vw, 2.35rem);
+  --h3: 1.18rem;
+
+  /* ---- Spacing (4px základ) ---- */
+  --sp-1: .25rem;
+  --sp-2: .5rem;
+  --sp-3: .75rem;
+  --sp-4: 1rem;
+  --sp-6: 1.5rem;
+  --sp-8: 2rem;
+  --sp-12: 3rem;
+  --sp-16: 4rem;
+  --sp-section: clamp(3.5rem, 8vw, 5.5rem);  /* vertikální rytmus sekcí */
+
+  /* ---- Tvary a stíny ---- */
+  --radius:     18px;
+  --radius-sm:  12px;
+  --radius-pill: 999px;
+  --shadow:     0 10px 40px -12px rgba(20, 28, 120, .22);
+  --shadow-sm:  0 4px 18px -8px rgba(20, 28, 120, .25);
+
+  /* ---- Layout & animace ---- */
+  --max:  1200px;
+  --ease: cubic-bezier(.22, 1, .36, 1);
+}

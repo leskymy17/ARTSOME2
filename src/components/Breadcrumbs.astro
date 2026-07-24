@@ -1,0 +1,61 @@
+---
+/**
+ * Drobečková navigace pro podstránky (+ BreadcrumbList schema).
+ */
+interface Crumb {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  items: Crumb[];
+  /** Světlá varianta na modrém hero */
+  onDark?: boolean;
+}
+
+const { items, onDark = false } = Astro.props;
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Domů', item: new URL('/', Astro.site).href },
+    ...items.map((c, i) => ({
+      '@type': 'ListItem',
+      position: i + 2,
+      name: c.label,
+      ...(c.href ? { item: new URL(c.href, Astro.site).href } : {}),
+    })),
+  ],
+};
+---
+
+<nav class:list={['crumbs', { 'crumbs--dark': onDark }]} aria-label="Drobečková navigace">
+  <ol>
+    <li><a href="/">Domů</a></li>
+    {items.map((c) => (
+      <li>
+        {c.href ? <a href={c.href}>{c.label}</a> : <span aria-current="page">{c.label}</span>}
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<script type="application/ld+json" set:html={JSON.stringify(schema)} is:inline />
+
+<style>
+  .crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .3rem;
+    list-style: none;
+    font-size: .9rem;
+    color: var(--ink-soft);
+  }
+
+  .crumbs li + li::before { content: '/'; margin-right: .3rem; opacity: .5; }
+  .crumbs a:hover { text-decoration: underline; }
+
+  .crumbs--dark { color: rgba(255, 255, 255, .75); }
+  .crumbs--dark ol { color: inherit; }
+</style>

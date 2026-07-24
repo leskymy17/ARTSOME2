@@ -1,0 +1,89 @@
+---
+/**
+ * FAQ akordeon na nativních <details> (přístupný bez JS)
+ * + FAQPage schema pro vyhledávače.
+ */
+import type { FaqItem } from '../data/faq';
+import Icon from './Icon.astro';
+
+interface Props {
+  items: FaqItem[];
+  /** Vypnout generování FAQPage schema (když je na stránce víc FAQ bloků) */
+  withSchema?: boolean;
+}
+
+const { items, withSchema = true } = Astro.props;
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: items.map((item) => ({
+    '@type': 'Question',
+    name: item.q,
+    acceptedAnswer: { '@type': 'Answer', text: item.a },
+  })),
+};
+---
+
+<div class="faq">
+  {items.map((item) => (
+    <details class="faq__item reveal">
+      <summary class="faq__q">
+        {item.q}
+        <span class="faq__chevron"><Icon name="chevron-down" size={18} /></span>
+      </summary>
+      <p class="faq__a">{item.a}</p>
+    </details>
+  ))}
+</div>
+
+{withSchema && <script type="application/ld+json" set:html={JSON.stringify(schema)} is:inline />}
+
+<style>
+  .faq {
+    display: grid;
+    gap: var(--sp-3);
+    max-width: 760px;
+    margin-inline: auto;
+  }
+
+  .faq__item {
+    background: var(--paper);
+    border: 1px solid var(--blue-line);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    transition: border-color .2s;
+  }
+
+  .faq__item[open] { border-color: var(--blue); }
+
+  .faq__q {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-4);
+    padding: var(--sp-4) var(--sp-6);
+    font-family: var(--font-head);
+    font-weight: 600;
+    color: var(--blue-ink);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .faq__q::-webkit-details-marker { display: none; }
+
+  .faq__chevron {
+    display: grid;
+    place-items: center;
+    color: var(--blue);
+    transition: transform .3s var(--ease);
+    flex: 0 0 auto;
+  }
+
+  .faq__item[open] .faq__chevron { transform: rotate(180deg); }
+
+  .faq__a {
+    padding: 0 var(--sp-6) var(--sp-4);
+    color: var(--ink-soft);
+  }
+</style>

@@ -1,0 +1,217 @@
+---
+/**
+ * Patička — kontakty, adresa, služby a oblast působení (interní odkazy + lokální SEO).
+ */
+import { site } from '../data/site';
+import { services } from '../data/services';
+import Icon from './Icon.astro';
+import logo from '../assets/artsome-logo.svg';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="wrap">
+    <!-- Kontaktní pás — telefon a e-mail vedle sebe -->
+    <div class="footer__contact">
+      <a href={site.phoneHref} class="footer__channel">
+        <span class="footer__channel-icon"><Icon name="phone" size={26} /></span>
+        <span class="footer__channel-body">
+          <span class="footer__channel-label">Telefon</span>
+          <strong class="footer__channel-value">{site.phone}</strong>
+        </span>
+      </a>
+      <a href={`mailto:${site.email}`} class="footer__channel">
+        <span class="footer__channel-icon"><Icon name="mail" size={26} /></span>
+        <span class="footer__channel-body">
+          <span class="footer__channel-label">E-mail</span>
+          <strong class="footer__channel-value">{site.email}</strong>
+        </span>
+      </a>
+    </div>
+
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <img src={logo.src} alt="ARTSOME" width="150" height="50" class="footer__logo" />
+        <p>
+          Malířství, lakýrnictví a natěračství. Rychlost, spolehlivost, kvalita,
+          čistota a lidský přístup.
+        </p>
+        <a
+          href={site.social.instagram}
+          target="_blank"
+          rel="noopener"
+          class="footer__social"
+          aria-label="ARTSOME na Instagramu"
+        >
+          <Icon name="instagram" size={20} />
+        </a>
+      </div>
+
+      <nav aria-label="Služby v patičce">
+        <h2 class="footer__head">Služby</h2>
+        <ul class="footer__list">
+          {services.map((s) => (
+            <li><a href={`/sluzby/${s.slug}/`}>{s.title}</a></li>
+          ))}
+          <li><a href="/reference/">Reference</a></li>
+        </ul>
+      </nav>
+
+      <div>
+        <h2 class="footer__head">Kontakt</h2>
+        <ul class="footer__list">
+          <li><a href={site.phoneHref}>Tel: {site.phone}</a></li>
+          <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
+          <li>{site.name}</li>
+          <li>IČO: {site.ico}</li>
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="footer__head">Kde nás najdete</h2>
+        <address class="footer__address">
+          {site.address.street}<br />
+          {site.address.city}<br />
+          {site.address.zip}
+        </address>
+        <p class="footer__area">
+          Působíme v celém Moravskoslezském kraji — {site.areaServed.slice(0, 4).join(', ')} a okolí.
+        </p>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <span>© {year} {site.name} Všechna práva vyhrazena.</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--blue-ink);
+    color: rgba(255, 255, 255, .78);
+    padding: var(--sp-16) 0 var(--sp-8);
+    font-size: .95rem;
+    /* rezerva pro mobilní sticky lištu */
+    margin-bottom: 0;
+  }
+
+  /* ---- Kontaktní pás ---- */
+  .footer__contact {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-8);
+    padding-bottom: var(--sp-12);
+    margin-bottom: var(--sp-12);
+    border-bottom: 1px solid rgba(255, 255, 255, .14);
+  }
+
+  .footer__channel {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-6);
+  }
+
+  .footer__channel-icon {
+    display: grid;
+    place-items: center;
+    width: 72px;
+    height: 72px;
+    flex: 0 0 auto;
+    border: 1.5px solid rgba(255, 255, 255, .35);
+    border-radius: 50%;
+    color: var(--accent-soft);
+    transition: border-color .2s, background .2s;
+  }
+
+  .footer__channel:hover .footer__channel-icon {
+    background: rgba(255, 255, 255, .08);
+    border-color: var(--accent-soft);
+  }
+
+  .footer__channel-body { display: grid; gap: .3rem; }
+
+  .footer__channel-label {
+    font-family: var(--font-head);
+    font-size: .8rem;
+    font-weight: 700;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--accent-soft);
+  }
+
+  .footer__channel-value {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: clamp(1.4rem, 2.6vw, 1.9rem);
+    color: #fff;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+  }
+
+  .footer__channel:hover .footer__channel-value { text-decoration: underline; }
+
+  /* ---- Hlavní mřížka ---- */
+  .footer__grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1.1fr;
+    gap: var(--sp-12);
+    padding-bottom: var(--sp-12);
+    border-bottom: 1px solid rgba(255, 255, 255, .14);
+  }
+
+  .footer__logo { height: 50px; width: auto; margin-bottom: var(--sp-4); }
+
+  .footer__social {
+    display: inline-grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    margin-top: var(--sp-4);
+    border: 1px solid rgba(255, 255, 255, .25);
+    border-radius: 10px;
+    color: #fff;
+    transition: background .2s, border-color .2s;
+  }
+  .footer__social:hover { background: rgba(255, 255, 255, .12); border-color: #fff; }
+
+  .footer__head {
+    font-size: .82rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: #fff;
+    margin-bottom: var(--sp-4);
+  }
+
+  .footer__list { list-style: none; display: grid; gap: .55rem; }
+  .footer__list a:hover { color: #fff; text-decoration: underline; }
+
+  .footer__address { font-style: normal; line-height: 1.7; }
+  .footer__area { margin-top: var(--sp-4); font-size: .88rem; color: rgba(255, 255, 255, .6); }
+
+  .footer__bottom {
+    padding-top: var(--sp-6);
+    font-size: .85rem;
+    color: rgba(255, 255, 255, .55);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--sp-4);
+  }
+
+  @media (max-width: 900px) {
+    .footer__grid { grid-template-columns: 1fr 1fr; gap: var(--sp-8); }
+  }
+
+  @media (max-width: 700px) {
+    .footer__contact { grid-template-columns: 1fr; gap: var(--sp-6); }
+    .footer__channel-icon { width: 58px; height: 58px; }
+  }
+
+  @media (max-width: 560px) {
+    .footer__grid { grid-template-columns: 1fr; }
+    .footer { padding-bottom: calc(var(--sp-8) + 72px); } /* místo pro sticky lištu */
+  }
+</style>

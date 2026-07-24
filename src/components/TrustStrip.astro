@@ -1,0 +1,87 @@
+---
+/**
+ * Pás důvěryhodnosti pod hero — 4 klíčové důkazy na jeden pohled.
+ */
+import { site } from '../data/site';
+import Icon from './Icon.astro';
+
+const items = [
+  { icon: 'sparkles', title: 'TOP firma 2025', text: 'Firmy.cz', href: site.rating.firmy.url },
+  { icon: 'shield', title: 'Certifikováno', text: 'NejŘemeslníci & Poptávej.cz', href: site.rating.nejremeslnici.url },
+  { icon: 'clock', title: 'Kalkulace zdarma', text: 'do 24 hodin' },
+  { icon: 'map-pin', title: 'Celý kraj', text: 'Moravskoslezský' },
+] as const;
+---
+
+<div class="trust">
+  <div class="wrap trust__row">
+    {items.map((item) => {
+      const Tag = item.href ? 'a' : 'div';
+      return (
+        <Tag
+          class="trust__item"
+          {...(item.href ? { href: item.href, target: '_blank', rel: 'noopener' } : {})}
+        >
+          <span class="trust__icon"><Icon name={item.icon} /></span>
+          <span>
+            <strong>{item.title}</strong><br />
+            {item.text}
+          </span>
+        </Tag>
+      );
+    })}
+  </div>
+</div>
+
+<style>
+  .trust {
+    background: var(--paper);
+    border-bottom: 1px solid var(--blue-line);
+  }
+
+  .trust__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-6);
+    padding-block: 22px;
+    flex-wrap: wrap;
+  }
+
+  .trust__item {
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+    font-size: .92rem;
+    color: var(--ink-soft);
+    font-weight: 500;
+    line-height: 1.35;
+  }
+
+  .trust__item strong {
+    color: var(--ink);
+    font-family: var(--font-head);
+    font-weight: 700;
+  }
+
+  a.trust__item:hover strong { color: var(--blue); }
+
+  .trust__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--blue-soft);
+    display: grid;
+    place-items: center;
+    color: var(--blue);
+    flex: 0 0 auto;
+  }
+
+  @media (max-width: 760px) {
+    .trust__row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-4);
+    }
+  }
+</style>

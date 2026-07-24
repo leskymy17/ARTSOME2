@@ -1,0 +1,255 @@
+---
+/**
+ * Stránka služby — generuje se automaticky pro každou položku
+ * v src/data/services.ts.
+ */
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import ProcessSteps from '../../components/ProcessSteps.astro';
+import RefCarousel from '../../components/RefCarousel.astro';
+import ReviewsSection from '../../components/ReviewsSection.astro';
+import FaqAccordion from '../../components/FaqAccordion.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import Button from '../../components/Button.astro';
+import Icon from '../../components/Icon.astro';
+import { services } from '../../data/services';
+import { gallery } from '../../data/gallery';
+import { site } from '../../data/site';
+
+export function getStaticPaths() {
+  return services.map((service) => ({
+    params: { slug: service.slug },
+    props: { service },
+  }));
+}
+
+const { service } = Astro.props;
+const others = services.filter((s) => s.slug !== service.slug);
+
+// Boční karta ukazuje reálnou fotku z galerie k dané službě
+// (ne ilustraci z karty) — první položku odpovídající kategorie.
+const asidePhoto = gallery.find((g) => g.category === service.galleryFilter);
+
+// Karusel vybraných referencí: nejdřív fotky k dané službě,
+// zbytek galerie doplní kapacitu, ať je vždy co posouvat.
+const carouselItems = [
+  ...gallery.filter((g) => g.category === service.galleryFilter),
+  ...gallery.filter((g) => g.category !== service.galleryFilter),
+];
+---
+
+<BaseLayout
+  title={`${service.headline} | ARTSOME — Moravskoslezský kraj`}
+  description={service.metaDescription}
+>
+  <PageHero title={service.headline} crumbs={[{ label: 'Služby' }, { label: service.title }]}>
+    {service.lead}
+  </PageHero>
+
+  <!-- OBSAH SLUŽBY -->
+  <section class="section svc-detail">
+    <div class="wrap svc-detail__grid">
+      <div class="svc-detail__content">
+        {service.sections.map((block) => (
+          <div class="svc-detail__block reveal">
+            <h2>{block.title}</h2>
+            <p>{block.text}</p>
+            {block.items && (
+              <ul class="svc-detail__list">
+                {block.items.map((item) => (
+                  <li><Icon name="check" size={17} /> {item}</li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ))}
+
+        <div class="svc-detail__carousel reveal">
+          <RefCarousel items={carouselItems} href={`/reference/?f=${service.galleryFilter}`} />
+        </div>
+
+        <div class="svc-detail__gallery-link reveal">
+          <Button href={`/reference/?f=${service.galleryFilter}`} variant="ghost">
+            Prohlédnout naše práce <Icon name="arrow-right" size={16} />
+          </Button>
+        </div>
+      </div>
+
+      <!-- Boční panel s CTA -->
+      <aside class="svc-detail__aside">
+        <div class="svc-detail__card reveal">
+          <figure class="svc-detail__photo">
+            <Image
+              src={asidePhoto?.image ?? service.image}
+              alt={asidePhoto?.alt ?? service.imageAlt}
+              width={480}
+              widths={[360, 480, 720]}
+              sizes="(max-width: 900px) 92vw, 360px"
+            />
+          </figure>
+          <h2 class="svc-detail__card-title">Kalkulace zdarma do 24 hodin</h2>
+          <p class="svc-detail__card-text">
+            Přijedeme, prohlédneme a naceníme — nezávazně a zdarma.
+          </p>
+          <Button href={site.phoneHref} variant="primary" class="svc-detail__card-btn">
+            <Icon name="phone" /> {site.phone}
+          </Button>
+          <Button href="/kontakt/" variant="ghost" class="svc-detail__card-btn">
+            Poslat poptávku
+          </Button>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ZKRÁCENÝ PROCES -->
+  <section class="section section--dim">
+    <div class="wrap">
+      <SectionHead kicker="Jak to probíhá" title="Tři kroky k hotovému" center class="reveal" />
+      <ProcessSteps compact />
+    </div>
+  </section>
+
+  <!-- RECENZE K TÉMATU -->
+  <ReviewsSection tag={service.slug} />
+
+  <!-- FAQ KE SLUŽBĚ -->
+  <section class="section">
+    <div class="wrap">
+      <SectionHead kicker="Časté dotazy" title={`${service.title} — na co se ptáte`} center class="reveal" />
+      <FaqAccordion items={service.faq} />
+    </div>
+  </section>
+
+  <!-- DALŠÍ SLUŽBY -->
+  <section class="section section--dim svc-others">
+    <div class="wrap">
+      <SectionHead kicker="Další služby" title="Co dalšího umíme" center class="reveal" />
+      <div class="svc-others__grid">
+        {others.map((s) => (
+          <a href={`/sluzby/${s.slug}/`} class="svc-others__item reveal">
+            <strong>{s.title}</strong>
+            <span>{s.cardText}</span>
+            <span class="svc-others__more">Více <Icon name="arrow-right" size={14} /></span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CtaBand />
+</BaseLayout>
+
+<style>
+  .svc-detail__grid {
+    display: grid;
+    grid-template-columns: 1.6fr .9fr;
+    gap: var(--sp-16);
+    align-items: start;
+  }
+
+  .svc-detail__block { margin-bottom: var(--sp-8); }
+
+  .svc-detail__carousel { margin-block: var(--sp-8) var(--sp-6); }
+  .svc-detail__block h2 { font-size: 1.45rem; margin-bottom: var(--sp-3); }
+  .svc-detail__block p { color: var(--ink-soft); }
+
+  .svc-detail__list {
+    list-style: none;
+    display: grid;
+    gap: .6rem;
+    margin-top: var(--sp-4);
+  }
+
+  .svc-detail__list li {
+    display: flex;
+    align-items: baseline;
+    gap: .6rem;
+    color: var(--ink);
+  }
+
+  .svc-detail__list :global(svg) {
+    color: var(--ok);
+    flex: 0 0 auto;
+    translate: 0 2px;
+  }
+
+  /* ---- Boční karta ---- */
+  .svc-detail__aside {
+    position: sticky;
+    top: 96px;
+  }
+
+  .svc-detail__card {
+    background: var(--paper);
+    border: 1px solid var(--blue-line);
+    border-radius: var(--radius);
+    padding: var(--sp-6);
+    box-shadow: var(--shadow-sm);
+    display: grid;
+    gap: var(--sp-3);
+  }
+
+  .svc-detail__photo {
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    margin-bottom: var(--sp-2);
+  }
+
+  .svc-detail__photo :global(img) {
+    width: 100%;
+    height: 190px;
+    object-fit: cover;
+  }
+
+  .svc-detail__card-title { font-size: 1.2rem; }
+  .svc-detail__card-text { color: var(--ink-soft); font-size: .93rem; }
+
+  :global(.svc-detail__card-btn) { justify-content: center; }
+
+  /* ---- Další služby ---- */
+  .svc-others__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--sp-6);
+  }
+
+  .svc-others__item {
+    display: grid;
+    gap: .5rem;
+    align-content: start;
+    background: var(--paper);
+    border: 1px solid var(--blue-line);
+    border-radius: var(--radius-sm);
+    padding: var(--sp-6);
+    transition: transform .3s var(--ease), box-shadow .3s var(--ease);
+  }
+
+  .svc-others__item:hover { transform: translateY(-4px); box-shadow: var(--shadow-sm); }
+
+  .svc-others__item strong {
+    font-family: var(--font-head);
+    font-size: 1.05rem;
+    color: var(--blue-ink);
+  }
+
+  .svc-others__item > span { font-size: .9rem; color: var(--ink-soft); }
+
+  .svc-others__more {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    font-family: var(--font-head);
+    font-weight: 600;
+    color: var(--blue) !important;
+    font-size: .9rem !important;
+  }
+
+  @media (max-width: 900px) {
+    .svc-detail__grid { grid-template-columns: 1fr; gap: var(--sp-8); }
+    .svc-detail__aside { position: static; }
+    .svc-others__grid { grid-template-columns: 1fr; }
+  }
+</style>

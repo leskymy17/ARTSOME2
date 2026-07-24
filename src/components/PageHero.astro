@@ -1,0 +1,56 @@
+---
+/**
+ * Modré hero podstránek — drobečky + H1 + perex (slot).
+ */
+import Breadcrumbs from './Breadcrumbs.astro';
+
+interface Props {
+  title: string;
+  crumbs: { label: string; href?: string }[];
+}
+
+const { title, crumbs } = Astro.props;
+---
+
+<section class="phero">
+  <div class="wrap">
+    <Breadcrumbs items={crumbs} onDark />
+    <h1 class="phero__title">{title}</h1>
+    {Astro.slots.has('default') && (
+      <p class="phero__lead"><slot /></p>
+    )}
+  </div>
+</section>
+
+<style>
+  .phero {
+    position: relative;
+    background: linear-gradient(160deg, var(--blue) 60%, var(--blue-deep));
+    color: #fff;
+    padding-block: var(--sp-12) var(--sp-16);
+    overflow: hidden;
+  }
+
+  .phero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(100% 80% at 90% 0%, rgba(255, 255, 255, .1), transparent 55%);
+    pointer-events: none;
+  }
+
+  .phero .wrap { position: relative; }
+
+  .phero__title {
+    font-size: var(--h1);
+    font-weight: 800;
+    color: #fff;
+    margin-block: var(--sp-4);
+  }
+
+  .phero__lead {
+    font-size: var(--text-lg);
+    color: rgba(255, 255, 255, .86);
+    max-width: 60ch;
+  }
+</style>

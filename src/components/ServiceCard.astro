@@ -1,0 +1,124 @@
+---
+/**
+ * Karta služby — používá se v mřížce na homepage.
+ * Celá karta je klikatelná a vede na detail služby.
+ */
+import { Image } from 'astro:assets';
+import type { Service } from '../data/services';
+import Icon from './Icon.astro';
+
+interface Props {
+  service: Service;
+  /** Pořadové číslo pro štítek 01–04 */
+  index: number;
+}
+
+const { service, index } = Astro.props;
+const num = String(index + 1).padStart(2, '0');
+---
+
+<article class="svc reveal">
+  <div class="svc__img">
+    <span class="svc__num" aria-hidden="true">{num}</span>
+    <Image
+      src={service.image}
+      alt={service.imageAlt}
+      width={480}
+      widths={[320, 480, 640]}
+      sizes="(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 280px"
+    />
+  </div>
+  <div class="svc__body">
+    <h3 class="svc__title">
+      <a href={`/sluzby/${service.slug}/`} class="svc__link-cover">{service.title}</a>
+    </h3>
+    <p class="svc__text">{service.cardText}</p>
+    <span class="svc__more">
+      Více o službě <Icon name="arrow-right" size={15} />
+    </span>
+  </div>
+</article>
+
+<style>
+  .svc {
+    position: relative;
+    background: var(--paper);
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--blue-line);
+    display: flex;
+    flex-direction: column;
+    transition: transform .3s var(--ease), box-shadow .3s var(--ease);
+  }
+
+  .svc:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow);
+  }
+
+  .svc__img {
+    height: 158px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .svc__img :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .5s var(--ease);
+  }
+
+  .svc:hover .svc__img :global(img) { transform: scale(1.07); }
+
+  .svc__num {
+    position: absolute;
+    z-index: 1;
+    top: 12px;
+    left: 12px;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, .92);
+    color: var(--blue);
+    font-family: var(--font-head);
+    font-weight: 800;
+    font-size: .85rem;
+    display: grid;
+    place-items: center;
+  }
+
+  .svc__body {
+    padding: 20px 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    flex: 1;
+  }
+
+  .svc__title { font-size: var(--h3); font-weight: 700; }
+
+  /* Klikatelná celá karta bez zanoření interaktivních prvků */
+  .svc__link-cover::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .svc__text { font-size: .93rem; color: var(--ink-soft); }
+
+  .svc__more {
+    margin-top: auto;
+    padding-top: var(--sp-2);
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: .9rem;
+    color: var(--blue);
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+  }
+
+  .svc__more :global(svg) { transition: transform .25s var(--ease); }
+  .svc:hover .svc__more :global(svg) { transform: translateX(4px); }
+</style>

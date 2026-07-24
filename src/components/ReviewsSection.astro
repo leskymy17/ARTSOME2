@@ -1,0 +1,131 @@
+---
+/**
+ * Sekce recenzí. Bez `tag` zobrazí všechny (homepage),
+ * s `tag` jen recenze k dané službě + doplní obecné do minima 3.
+ */
+import { site } from '../data/site';
+import { reviews } from '../data/reviews';
+import SectionHead from './SectionHead.astro';
+import RatingStars from './RatingStars.astro';
+
+interface Props {
+  tag?: string;
+  /** Skrýt hlavičku sekce (na stránkách služeb má vlastní) */
+  bare?: boolean;
+}
+
+const { tag, bare = false } = Astro.props;
+
+let items = tag ? reviews.filter((r) => r.tags?.includes(tag)) : reviews;
+if (tag && items.length < 3) {
+  const rest = reviews.filter((r) => !items.includes(r));
+  items = [...items, ...rest.slice(0, 3 - items.length)];
+}
+
+const initials = (name: string) => name.trim().charAt(0).toUpperCase();
+---
+
+<section class:list={['reviews', { section: !bare }]} id={bare ? undefined : 'recenze'}>
+  <div class="wrap">
+    {!bare && (
+      <SectionHead
+        kicker="Co říkají zákazníci"
+        title={`Hodnocení ${site.rating.firmy.score} z 5`}
+        center
+        class="reveal"
+      >
+        Spolehlivost, čistota a lidský přístup — to slýcháme nejčastěji.
+        {site.rating.firmy.count} ověřených recenzí na Firmy.cz.
+      </SectionHead>
+    )}
+
+    <div class="reviews__grid">
+      {items.map((review) => (
+        <blockquote class="review reveal">
+          <RatingStars />
+          <p class="review__text">„{review.text}“</p>
+          <footer class="review__who">
+            <span class="review__avatar" aria-hidden="true">{initials(review.name)}</span>
+            <div>
+              <cite class="review__name">{review.name}</cite>
+              <span class="review__meta">{review.source} · {review.date}</span>
+            </div>
+          </footer>
+        </blockquote>
+      ))}
+    </div>
+
+    <p class="reviews__all">
+      <a href={site.rating.firmy.url} target="_blank" rel="noopener">
+        Číst všech {site.rating.firmy.count} recenzí na Firmy.cz →
+      </a>
+    </p>
+  </div>
+</section>
+
+<style>
+  .reviews { background: var(--paper-dim); }
+
+  .reviews__grid {
+    columns: 3 300px;
+    column-gap: var(--sp-6);
+  }
+
+  .review {
+    break-inside: avoid;
+    background: var(--paper);
+    border: 1px solid var(--blue-line);
+    border-radius: var(--radius);
+    padding: var(--sp-6);
+    margin-bottom: var(--sp-6);
+  }
+
+  .review__text {
+    margin-block: var(--sp-3) var(--sp-4);
+    color: var(--ink);
+    font-size: .96rem;
+  }
+
+  .review__who {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+  }
+
+  .review__avatar {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--blue-soft);
+    color: var(--blue);
+    font-family: var(--font-head);
+    font-weight: 700;
+    flex: 0 0 auto;
+  }
+
+  .review__name {
+    display: block;
+    font-style: normal;
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: .95rem;
+    color: var(--blue-ink);
+  }
+
+  .review__meta { font-size: .82rem; color: var(--ink-soft); }
+
+  .reviews__all {
+    text-align: center;
+    margin-top: var(--sp-4);
+  }
+
+  .reviews__all a {
+    font-family: var(--font-head);
+    font-weight: 600;
+    color: var(--blue);
+  }
+
+  .reviews__all a:hover { text-decoration: underline; }
+</style>

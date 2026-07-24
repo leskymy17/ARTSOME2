@@ -1,0 +1,16 @@
+# Astro build výstup
+dist/
+.astro/
+
+# Závislosti
+node_modules/
+
+# Systémové a editorové soubory
+.DS_Store
+*.log
+.vscode/
+.idea/
+
+# Env
+.env
+.env.production

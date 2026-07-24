@@ -1,0 +1,278 @@
+---
+/**
+ * Homepage — nese hlavní příběh: hero → důvěra → služby → proces
+ * → ukázka práce → recenze → o nás → oblast → FAQ → poptávka.
+ */
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import TrustStrip from '../components/TrustStrip.astro';
+import SectionHead from '../components/SectionHead.astro';
+import ServiceCard from '../components/ServiceCard.astro';
+import ProcessSteps from '../components/ProcessSteps.astro';
+import BeforeAfterSlider from '../components/BeforeAfterSlider.astro';
+import ReviewsSection from '../components/ReviewsSection.astro';
+import AboutBlock from '../components/AboutBlock.astro';
+import AreaCoverage from '../components/AreaCoverage.astro';
+import FaqAccordion from '../components/FaqAccordion.astro';
+import LeadForm from '../components/LeadForm.astro';
+import Button from '../components/Button.astro';
+import Icon from '../components/Icon.astro';
+
+import { site } from '../data/site';
+import { services } from '../data/services';
+import { gallery, caseStudy } from '../data/gallery';
+import { faq } from '../data/faq';
+
+const teaser = gallery.slice(0, 3);
+---
+
+<BaseLayout
+  title="ARTSOME — Malířství, nátěry a renovace | Moravskoslezský kraj"
+  description={site.description}
+>
+  <Hero />
+  <TrustStrip />
+
+  <!-- SLUŽBY -->
+  <section class="section section--dim" id="sluzby">
+    <div class="wrap">
+      <SectionHead kicker="Co pro vás uděláme" title="Čtyři věci, které umíme nejlépe" center class="reveal">
+        Od jednoho pokoje po kompletní rekonstrukci. Interiér i exteriér, dřevo i kov.
+      </SectionHead>
+
+      <div class="home-svc-grid">
+        {services.map((service, i) => (
+          <ServiceCard service={service} index={i} />
+        ))}
+      </div>
+
+      <p class="home-svc-note reveal">
+        Lepíme také <strong>tapety a fototapety</strong>, děláme <strong>dekorativní stěrky</strong>
+        a zajišťujeme drobné zednické práce — štuky, perlinku i nové jádro.
+      </p>
+    </div>
+  </section>
+
+  <!-- JAK TO PROBÍHÁ -->
+  <section class="section" id="postup">
+    <div class="wrap">
+      <SectionHead kicker="Jak to probíhá" title="Od poptávky po úklid v pěti krocích" center class="reveal">
+        Žádné překvapení — dopředu víte, co se bude dít, kdy a za kolik.
+      </SectionHead>
+      <ProcessSteps />
+    </div>
+  </section>
+
+  <!-- REFERENCE TEASER + PROMĚNA -->
+  <section class="section section--dim" id="reference">
+    <div class="wrap">
+      <div class="home-ref-head reveal">
+        <SectionHead kicker="Reference" title="Naše práce mluví za nás" class="home-ref-title">
+          Reálné fotky z realizací po celém kraji — žádný stock, jen odvedená práce.
+        </SectionHead>
+        <Button href="/reference/" variant="ghost" class="home-ref-btn">
+          Všechny reference <Icon name="arrow-right" size={16} />
+        </Button>
+      </div>
+
+      <div class="home-ref-grid">
+        {teaser.map((item) => (
+          <a href="/reference/" class="home-ref-cell reveal" aria-label={`Reference: ${item.caption}`}>
+            <Image
+              src={item.image}
+              alt={item.alt}
+              width={640}
+              widths={[420, 640]}
+              sizes="(max-width: 700px) 92vw, 380px"
+            />
+            <span class="home-ref-cap">{item.caption}</span>
+          </a>
+        ))}
+      </div>
+
+      <div class="home-case reveal">
+        <div class="home-case__text">
+          <SectionHead kicker={caseStudy.kicker} title={caseStudy.title}>
+            {caseStudy.text}
+          </SectionHead>
+          <Button href="/reference/" variant="primary">
+            Celá proměna v referencích <Icon name="arrow-right" size={16} />
+          </Button>
+        </div>
+        <BeforeAfterSlider
+          before={caseStudy.pairs[0]!.before}
+          after={caseStudy.pairs[0]!.after}
+          class="home-case__slider"
+        />
+      </div>
+    </div>
+  </section>
+
+  <ReviewsSection />
+  <AboutBlock />
+  <AreaCoverage />
+
+  <!-- FAQ -->
+  <section class="section" id="faq">
+    <div class="wrap">
+      <SectionHead kicker="Časté dotazy" title="Na co se nás ptáte nejčastěji" center class="reveal" />
+      <FaqAccordion items={faq} />
+    </div>
+  </section>
+
+  <!-- POPTÁVKA -->
+  <section class="home-contact" id="poptavka">
+    <div class="wrap home-contact__grid">
+      <div class="home-contact__info reveal">
+        <SectionHead
+          kicker="Nezávazná poptávka"
+          title="Domluvíme schůzku a kalkulaci zdarma"
+          onDark
+        >
+          Napište nebo zavolejte — ozveme se obvykle do 24 hodin
+          a vypracujeme nezávaznou cenovou nabídku.
+        </SectionHead>
+        <div class="home-contact__channels">
+          <a href={site.phoneHref} class="home-contact__channel">
+            <Icon name="phone" /> {site.phone}
+          </a>
+          <a href={`mailto:${site.email}`} class="home-contact__channel">
+            <Icon name="mail" /> {site.email}
+          </a>
+        </div>
+      </div>
+      <div class="home-contact__form reveal">
+        <LeadForm source="homepage" />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* ---- Služby ---- */
+  .home-svc-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 22px;
+  }
+
+  .home-svc-note {
+    text-align: center;
+    margin-top: var(--sp-8);
+    color: var(--ink-soft);
+    font-size: .96rem;
+  }
+
+  .home-svc-note strong { color: var(--blue-ink); }
+
+  /* ---- Reference teaser ---- */
+  .home-ref-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--sp-8);
+    flex-wrap: wrap;
+  }
+
+  .home-ref-head :global(.home-ref-title) { margin-bottom: var(--sp-8); }
+  :global(.home-ref-btn) { margin-bottom: var(--sp-8); }
+
+  .home-ref-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: var(--sp-16);
+  }
+
+  .home-ref-cell {
+    position: relative;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    height: 230px;
+  }
+
+  .home-ref-cell :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .45s var(--ease);
+  }
+
+  .home-ref-cell:hover :global(img) { transform: scale(1.05); }
+
+  .home-ref-cap {
+    position: absolute;
+    inset: auto 0 0 0;
+    padding: 2rem .9rem .7rem;
+    background: linear-gradient(transparent, rgba(10, 12, 50, .78));
+    color: #fff;
+    font-size: .85rem;
+    font-weight: 600;
+  }
+
+  /* ---- Případovka ---- */
+  .home-case {
+    display: grid;
+    grid-template-columns: .9fr 1.1fr;
+    gap: var(--sp-12);
+    align-items: center;
+    background: var(--paper);
+    border: 1px solid var(--blue-line);
+    border-radius: var(--radius);
+    padding: var(--sp-12);
+  }
+
+  .home-case__text :global(.sec-head) { margin-bottom: var(--sp-6); }
+
+  /* ---- Poptávka ---- */
+  .home-contact {
+    background: linear-gradient(160deg, var(--blue) 55%, var(--blue-deep));
+    padding-block: var(--sp-section);
+  }
+
+  .home-contact__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-16);
+    align-items: start;
+  }
+
+  .home-contact__channels {
+    display: grid;
+    gap: var(--sp-3);
+    margin-top: var(--sp-6);
+  }
+
+  .home-contact__channel {
+    display: inline-flex;
+    align-items: center;
+    gap: .7rem;
+    color: #fff;
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 1.15rem;
+  }
+
+  .home-contact__channel:hover { text-decoration: underline; }
+
+  .home-contact__form {
+    background: var(--paper);
+    border-radius: var(--radius);
+    padding: var(--sp-8);
+    box-shadow: var(--shadow);
+  }
+
+  /* ---- Responzivita ---- */
+  @media (max-width: 1000px) {
+    .home-svc-grid { grid-template-columns: repeat(2, 1fr); }
+    .home-case { grid-template-columns: 1fr; padding: var(--sp-6); gap: var(--sp-6); }
+    .home-contact__grid { grid-template-columns: 1fr; gap: var(--sp-8); }
+  }
+
+  @media (max-width: 640px) {
+    .home-svc-grid { grid-template-columns: 1fr; }
+    .home-ref-grid { grid-template-columns: 1fr; }
+    .home-ref-cell { height: 200px; }
+  }
+</style>

@@ -1,0 +1,123 @@
+---
+/**
+ * Blok „O nás“ — kdo za firmou stojí + certifikace.
+ * Cíl kotvy /#onas z hlavního menu.
+ */
+import { Image } from 'astro:assets';
+import { site } from '../data/site';
+import SectionHead from './SectionHead.astro';
+import Icon from './Icon.astro';
+import photo from '../assets/photo/ref-5.jpeg';
+---
+
+<section class="about section" id="onas">
+  <div class="wrap about__grid">
+    <div class="about__content">
+      <SectionHead kicker="O nás" title="Řemeslo, na které je spoleh" class="reveal" />
+      <div class="about__text reveal">
+        <p>
+          Jsme malíři a natěrači z Havířova. Pod hlavičkou <strong>{site.name}</strong> (IČO
+          {site.ico}) malujeme, natíráme a renovujeme po celém Moravskoslezském kraji —
+          od jednoho pokoje po celé školy, haly a hotely.
+        </p>
+        <p>
+          Zakládáme si na věcech, které jsou v řemesle vzácné: přijedeme, kdy jsme slíbili,
+          pracujeme čistě a po práci po sobě uklidíme. Proto se k nám zákazníci vracejí
+          a doporučují nás dál.
+        </p>
+      </div>
+
+      <ul class="about__badges reveal">
+        <li>
+          <a href={site.rating.firmy.url} target="_blank" rel="noopener" class="about__badge">
+            <Icon name="sparkles" />
+            <span><strong>TOP firma 2025</strong><br />Firmy.cz · {site.rating.firmy.score} z 5</span>
+          </a>
+        </li>
+        <li>
+          <a href={site.rating.nejremeslnici.url} target="_blank" rel="noopener" class="about__badge">
+            <Icon name="shield" />
+            <span><strong>Certifikace</strong><br />NejŘemeslníci.cz · {site.rating.nejremeslnici.score}</span>
+          </a>
+        </li>
+        <li>
+          <span class="about__badge">
+            <Icon name="broom" />
+            <span><strong>Pořádek po práci</strong><br />vždy a bez výjimky</span>
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    <figure class="about__photo reveal">
+      <Image
+        src={photo}
+        alt="Vymalovaný pokoj s modrou stěnou a renovovanými dveřmi"
+        width={620}
+        widths={[420, 620, 900]}
+        sizes="(max-width: 900px) 92vw, 480px"
+      />
+    </figure>
+  </div>
+</section>
+
+<style>
+  .about__grid {
+    display: grid;
+    grid-template-columns: 1.15fr .85fr;
+    gap: var(--sp-16);
+    align-items: center;
+  }
+
+  .about__text {
+    display: grid;
+    gap: var(--sp-4);
+    color: var(--ink-soft);
+    margin-top: calc(-1 * var(--sp-8));
+  }
+
+  .about__text strong { color: var(--blue-ink); }
+
+  .about__badges {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-4);
+    margin-top: var(--sp-8);
+  }
+
+  .about__badge {
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+    background: var(--blue-soft);
+    border: 1px solid var(--blue-line);
+    border-radius: var(--radius-sm);
+    padding: .8rem 1rem;
+    font-size: .88rem;
+    line-height: 1.35;
+    color: var(--ink-soft);
+    height: 100%;
+  }
+
+  .about__badge :global(svg) { color: var(--blue); flex: 0 0 auto; }
+  .about__badge strong { color: var(--blue-ink); font-family: var(--font-head); }
+  a.about__badge:hover { border-color: var(--blue); }
+
+  .about__photo {
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+
+  .about__photo :global(img) {
+    width: 100%;
+    height: 460px;
+    object-fit: cover;
+  }
+
+  @media (max-width: 900px) {
+    .about__grid { grid-template-columns: 1fr; gap: var(--sp-8); }
+    .about__photo :global(img) { height: 300px; }
+  }
+</style>

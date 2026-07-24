@@ -1,0 +1,243 @@
+---
+/**
+ * Hlavička webu — sticky, s rozbalovacím menu Služby a mobilní navigací.
+ */
+import { site } from '../data/site';
+import { services } from '../data/services';
+import Icon from './Icon.astro';
+import Button from './Button.astro';
+import logo from '../assets/artsome-logo.svg';
+
+const { pathname } = Astro.url;
+const isActive = (path: string) =>
+  path === '/' ? pathname === '/' : pathname.startsWith(path);
+---
+
+<header class="header">
+  <div class="wrap header__row">
+    <a href="/" class="header__logo" aria-label="ARTSOME — úvodní stránka">
+      <img src={logo.src} alt="ARTSOME — malířství a natěračství" width="140" height="47" />
+    </a>
+
+    <nav class="header__nav" aria-label="Hlavní navigace">
+      <ul class="header__menu">
+        <li class="header__item header__item--has-sub">
+          <a
+            href="/#sluzby"
+            class:list={['header__link', { 'is-active': isActive('/sluzby') }]}
+            aria-haspopup="true"
+          >
+            Služby <Icon name="chevron-down" size={14} />
+          </a>
+          <ul class="header__sub">
+            {services.map((s) => (
+              <li>
+                <a href={`/sluzby/${s.slug}/`} class="header__sub-link">{s.title}</a>
+              </li>
+            ))}
+          </ul>
+        </li>
+        <li><a href="/reference/" class:list={['header__link', { 'is-active': isActive('/reference') }]}>Reference</a></li>
+        <li><a href="/#onas" class="header__link">O nás</a></li>
+        <li><a href="/kontakt/" class:list={['header__link', { 'is-active': isActive('/kontakt') }]}>Kontakt</a></li>
+      </ul>
+    </nav>
+
+    <div class="header__actions">
+      <a href={site.phoneHref} class="header__phone">
+        <Icon name="phone" size={18} />
+        <strong>{site.phone}</strong>
+      </a>
+      <Button href="/kontakt/" class="header__cta">Nezávazná poptávka</Button>
+      <button
+        class="header__burger"
+        id="navToggle"
+        aria-expanded="false"
+        aria-controls="mobileNav"
+        aria-label="Otevřít menu"
+      >
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobilní menu -->
+  <nav class="header__mobile" id="mobileNav" aria-label="Mobilní navigace" hidden>
+    <ul>
+      <li class="header__mobile-group">Služby</li>
+      {services.map((s) => (
+        <li><a href={`/sluzby/${s.slug}/`}>{s.title}</a></li>
+      ))}
+      <li class="header__mobile-sep" role="presentation"></li>
+      <li><a href="/reference/">Reference</a></li>
+      <li><a href="/#onas">O nás</a></li>
+      <li><a href="/kontakt/">Kontakt</a></li>
+    </ul>
+    <a href={site.phoneHref} class="header__mobile-phone">
+      <Icon name="phone" size={18} /> {site.phone}
+    </a>
+  </nav>
+</header>
+
+<script>
+  const toggle = document.getElementById('navToggle');
+  const nav = document.getElementById('mobileNav');
+
+  toggle?.addEventListener('click', () => {
+    const open = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!open));
+    toggle.setAttribute('aria-label', open ? 'Otevřít menu' : 'Zavřít menu');
+    if (nav) nav.hidden = open;
+    document.body.classList.toggle('nav-open', !open);
+  });
+</script>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--paper);
+    border-bottom: 1px solid var(--blue-line);
+  }
+
+  .header__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-6);
+    height: 76px;
+  }
+
+  .header__logo img { height: 56px; width: auto; }
+
+  .header__menu {
+    display: flex;
+    gap: var(--sp-8);
+    list-style: none;
+  }
+
+  .header__link {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    font-weight: 500;
+    color: var(--ink);
+    padding-block: .5rem;
+    border-bottom: 2px solid transparent;
+    transition: color .2s;
+  }
+  .header__link:hover { color: var(--blue); }
+  .header__link.is-active { color: var(--blue); border-bottom-color: var(--blue); }
+
+  /* Rozbalovací submenu Služby */
+  .header__item--has-sub { position: relative; }
+  .header__sub {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 50%;
+    translate: -50% 0;
+    min-width: 210px;
+    background: var(--paper);
+    border: 1px solid var(--blue-line);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow);
+    list-style: none;
+    padding: .5rem;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(6px);
+    transition: opacity .2s var(--ease), transform .2s var(--ease), visibility .2s;
+  }
+  .header__item--has-sub:hover .header__sub,
+  .header__item--has-sub:focus-within .header__sub {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+  .header__sub-link {
+    display: block;
+    padding: .55rem .8rem;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: .95rem;
+  }
+  .header__sub-link:hover { background: var(--blue-soft); color: var(--blue); }
+
+  .header__actions { display: flex; align-items: center; gap: var(--sp-6); }
+
+  .header__phone {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    color: var(--blue-ink);
+    font-family: var(--font-head);
+  }
+  .header__phone:hover { color: var(--blue); }
+
+  /* Burger */
+  .header__burger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: 0;
+    padding: 8px;
+  }
+  .header__burger span {
+    width: 24px;
+    height: 2.5px;
+    background: var(--blue-ink);
+    border-radius: 2px;
+    transition: transform .25s var(--ease), opacity .2s;
+  }
+  .header__burger[aria-expanded='true'] span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+  .header__burger[aria-expanded='true'] span:nth-child(2) { opacity: 0; }
+  .header__burger[aria-expanded='true'] span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+
+  /* Mobilní menu */
+  .header__mobile {
+    background: var(--paper);
+    border-bottom: 1px solid var(--blue-line);
+    padding: var(--sp-4) 24px var(--sp-6);
+  }
+  .header__mobile ul { list-style: none; }
+  .header__mobile a {
+    display: block;
+    padding: .7rem 0;
+    font-family: var(--font-head);
+    font-weight: 600;
+    color: var(--blue-ink);
+  }
+  .header__mobile-group {
+    font-size: .78rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    padding-block: .5rem;
+  }
+  .header__mobile-sep { border-top: 1px solid var(--blue-line); margin-block: .5rem; }
+  .header__mobile-phone {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    margin-top: var(--sp-4);
+    color: var(--blue);
+    font-weight: 700;
+    font-family: var(--font-head);
+  }
+
+  @media (max-width: 960px) {
+    .header__nav, .header__phone { display: none; }
+    .header__burger { display: flex; }
+    .header__row { height: 64px; }
+    .header__logo img { height: 40px; }
+    .header__actions { gap: var(--sp-2); }
+    :global(.header__cta) { padding: .65rem 1.1rem; font-size: .9rem; }
+  }
+
+  @media (max-width: 380px) {
+    :global(.header__cta) { display: none; }
+  }
+</style>

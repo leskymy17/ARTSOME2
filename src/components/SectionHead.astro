@@ -1,0 +1,48 @@
+---
+/**
+ * Hlavička sekce: kicker (malý nadpis) + H2 + volitelný perex ve slotu.
+ */
+interface Props {
+  kicker?: string;
+  title: string;
+  /** Vycentrovat (default zarovnání vlevo) */
+  center?: boolean;
+  /** Světlá varianta pro tmavé/modré pozadí */
+  onDark?: boolean;
+  class?: string;
+}
+
+const { kicker, title, center = false, onDark = false, class: className } = Astro.props;
+---
+
+<div class:list={['sec-head', { 'sec-head--center': center, 'sec-head--dark': onDark }, className]}>
+  {kicker && <span class="sec-head__kicker">{kicker}</span>}
+  <h2 class="sec-head__title">{title}</h2>
+  {Astro.slots.has('default') && (
+    <p class="sec-head__lead"><slot /></p>
+  )}
+</div>
+
+<style>
+  .sec-head { max-width: 640px; margin-bottom: var(--sp-12); }
+  .sec-head--center { margin-inline: auto; text-align: center; }
+
+  .sec-head__kicker {
+    display: inline-block;
+    font-family: var(--font-head);
+    font-size: .8rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: var(--sp-3);
+  }
+
+  .sec-head__title { font-size: var(--h2); margin-bottom: var(--sp-4); }
+
+  .sec-head__lead { color: var(--ink-soft); font-size: var(--text-lg); }
+
+  .sec-head--dark .sec-head__kicker { color: var(--accent-soft); }
+  .sec-head--dark .sec-head__title { color: #fff; }
+  .sec-head--dark .sec-head__lead { color: rgba(255, 255, 255, .85); }
+</style>
