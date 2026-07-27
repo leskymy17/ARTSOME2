@@ -22,7 +22,7 @@
   --ok:         #1a9e5c;   /* úspěch — odeslaný formulář, fajfky */
 
   /* ---- Typografie ---- */
-  --font-head: 'Sora Variable', 'Sora', sans-serif;
+  --font-head: 'Poppins', sans-serif;
   --font-body: 'Inter Variable', 'Inter', sans-serif;
   --text-sm:   .9rem;
   --text-base: 1rem;
