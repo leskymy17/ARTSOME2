@@ -15,25 +15,25 @@ import imgInset from '../assets/photo/ref-1.jpeg';
 <section class="hero">
   <div class="wrap hero__grid">
     <div class="hero__content">
-      <p class="hero__eyebrow">⭐ TOP FIRMA 2025 · Moravskoslezský kraj</p>
+      <p class="hero__eyebrow hero__enter" style="--enter-i:0">⭐ TOP FIRMA 2025 · Moravskoslezský kraj</p>
 
-      <h1 class="hero__title">
+      <h1 class="hero__title hero__enter" style="--enter-i:1">
         Malířství, nátěry a <em>renovace</em> bez kompromisů
       </h1>
 
-      <p class="hero__lead">
+      <p class="hero__lead hero__enter" style="--enter-i:2">
         Vymalujeme pokoj i celý objekt. Rychle, čistě a za rozumnou cenu —
         od první barvy po závěrečný úklid.
       </p>
 
-      <div class="hero__actions">
+      <div class="hero__actions hero__enter" style="--enter-i:3">
         <Button href={site.phoneHref} variant="inverse">
           <Icon name="phone" /> {site.phone}
         </Button>
         <Button href="/kontakt/" variant="light">Cenová kalkulace zdarma</Button>
       </div>
 
-      <div class="hero__trust">
+      <div class="hero__trust hero__enter" style="--enter-i:4">
         <a href={site.rating.firmy.url} target="_blank" rel="noopener" class="hero__trust-item">
           <RatingStars />
           <strong>{site.rating.firmy.score} na Firmy.cz</strong>
@@ -45,7 +45,7 @@ import imgInset from '../assets/photo/ref-1.jpeg';
         </span>
       </div>
 
-      <a href={site.rating.nejremeslnici.url} target="_blank" rel="noopener" class="hero__nr">
+      <a href={site.rating.nejremeslnici.url} target="_blank" rel="noopener" class="hero__nr hero__enter" style="--enter-i:5">
         <span class="hero__nr-stars" aria-hidden="true">★★★★★</span>
         <strong>{site.rating.nejremeslnici.score}</strong>
         <span>· {site.rating.nejremeslnici.count} hodnocení na NejŘemeslníci.cz</span>
@@ -53,11 +53,11 @@ import imgInset from '../assets/photo/ref-1.jpeg';
     </div>
 
     <div class="hero__visual">
-      <figure class="hero__photo">
+      <figure class="hero__photo hero__enter hero__enter--photo" style="--enter-i:2">
         <span class="hero__tag">Renovace chaty — po</span>
         <Image src={imgMain} alt="Dřevěná chata po kompletní renovaci nátěru" width={720} widths={[480, 720, 960]} sizes="(max-width: 900px) 92vw, 560px" loading="eager" fetchpriority="high" />
       </figure>
-      <figure class="hero__photo hero__photo--inset">
+      <figure class="hero__photo hero__photo--inset hero__enter hero__enter--photo" style="--enter-i:4">
         <span class="hero__tag hero__tag--accent">Výmalba interiéru</span>
         <Image src={imgInset} alt="Čerstvě vymalovaný obývák s červenou akcentní stěnou" width={380} widths={[280, 380, 560]} sizes="(max-width: 900px) 50vw, 330px" loading="eager" />
       </figure>
@@ -71,6 +71,37 @@ import imgInset from '../assets/photo/ref-1.jpeg';
     background: var(--blue);
     color: #fff;
     overflow: hidden;
+  }
+
+  /* ---- Autorský vstup hero (jediný „focal moment“ webu) ----
+     Obsah i fotky najíždějí v sekvenci hned po načtení. Skryté jsou
+     jen s html.js (nastaveno v <head> ještě před vykreslením), takže
+     bez JS je vše rovnou vidět. */
+  :global(html.js) .hero__enter {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: hero-rise var(--dur-slow) var(--ease) forwards;
+    animation-delay: calc(var(--enter-i, 0) * 90ms + 60ms);
+  }
+
+  :global(html.js) .hero__enter--photo {
+    transform: translateY(24px) scale(.965);
+    animation-name: hero-rise-photo;
+  }
+
+  @keyframes hero-rise {
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes hero-rise-photo {
+    to { opacity: 1; transform: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(html.js) .hero__enter {
+      opacity: 1;
+      transform: none;
+      animation: none;
+    }
   }
 
   /* jemné světelné přechody v pozadí */

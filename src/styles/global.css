@@ -73,11 +73,15 @@ button { font: inherit; cursor: pointer; }
 }
 
 /* Scroll-reveal animace (aktivuje ji skript v BaseLayout).
-   Skryté jsou prvky jen když běží JS (html.js) — bez JS zůstává vše vidět. */
+   Skryté jsou prvky jen když běží JS (html.js) — bez JS zůstává vše vidět.
+   --reveal-i nastavuje skript sourozencům ve skupině → řízený stagger. */
 html.js .reveal {
   opacity: 0;
-  transform: translateY(22px);
-  transition: opacity .7s var(--ease), transform .7s var(--ease);
+  transform: translateY(18px);
+  transition:
+    opacity .6s var(--ease),
+    transform .6s var(--ease);
+  transition-delay: calc(var(--reveal-i, 0) * 70ms);
 }
 
 html.js .reveal.is-visible {
@@ -86,5 +90,5 @@ html.js .reveal.is-visible {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html.js .reveal { opacity: 1; transform: none; }
+  html.js .reveal { opacity: 1; transform: none; transition: none; }
 }

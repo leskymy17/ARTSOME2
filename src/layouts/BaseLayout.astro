@@ -69,6 +69,10 @@ const businessSchema = {
     <meta property="og:image" content={new URL(ogImage.src, Astro.site).href} />
 
     <script type="application/ld+json" set:html={JSON.stringify(businessSchema)} is:inline />
+
+    <!-- Označí dokument jako „JS aktivní“ ještě před vykreslením, aby se
+         skryté reveal/entrance prvky neobjevily a hned neskryly (žádné bliknutí). -->
+    <script is:inline>document.documentElement.classList.add('js');</script>
   </head>
   <body>
     <a href="#main" class="skip-link">Přeskočit na obsah</a>
@@ -83,9 +87,25 @@ const businessSchema = {
       // Scroll-reveal: prvkům s třídou .reveal přidá .is-visible při vstupu
       // do viewportu. Skrývání je aktivní jen s html.js (viz global.css),
       // takže bez JS zůstává veškerý obsah viditelný.
-      document.documentElement.classList.add('js');
+      const revealEls = [...document.querySelectorAll<HTMLElement>('.reveal')];
 
-      const reveal = (el: Element) => el.classList.add('is-visible');
+      // Řízený stagger: sourozencům ve stejném rodiči přiřadíme pořadí,
+      // aby seznamy (karty služeb, kroky, recenze) najížděly v sekvenci,
+      // ne náhodně. Index zastropujeme, ať dlouhé seznamy nečekají.
+      const groups = new Map<Element, HTMLElement[]>();
+      for (const el of revealEls) {
+        const parent = el.parentElement;
+        if (!parent) continue;
+        const list = groups.get(parent) ?? [];
+        list.push(el);
+        groups.set(parent, list);
+      }
+      for (const siblings of groups.values()) {
+        if (siblings.length < 2) continue;
+        siblings.forEach((el, i) => {
+          el.style.setProperty('--reveal-i', String(Math.min(i, 6)));
+        });
+      }
 
       const observer = new IntersectionObserver(
         (entries) => {
@@ -93,14 +113,14 @@ const businessSchema = {
             // odhalit i prvky, které uživatel přeskočil (anchor odkazy,
             // rychlý scroll) — jinak by nad viewportem zůstaly neviditelné
             if (entry.isIntersecting || entry.boundingClientRect.top < 0) {
-              reveal(entry.target);
+              entry.target.classList.add('is-visible');
               observer.unobserve(entry.target);
             }
           }
         },
         { rootMargin: '0px 0px -8% 0px' },
       );
-      document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+      revealEls.forEach((el) => observer.observe(el));
     </script>
   </body>
 </html>

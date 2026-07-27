@@ -38,7 +38,10 @@ import Icon from './Icon.astro';
     font-family: var(--font-head);
     font-weight: 700;
     font-size: .95rem;
+    transition: transform var(--dur-fast) var(--ease);
   }
+
+  .mbar a:active { transform: scale(.97); }
 
   .mbar__call {
     background: var(--blue-soft);

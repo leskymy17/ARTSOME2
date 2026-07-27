@@ -70,4 +70,10 @@ const { href, variant = 'primary', class: className } = Astro.props;
     box-shadow: 0 8px 22px -8px rgba(0, 0, 0, .35);
   }
   .btn--inverse:hover { transform: translateY(-2px); }
+
+  /* Hmatatelná odezva při stisku — společná pro všechny varianty. */
+  .btn:active {
+    transform: translateY(0) scale(.97);
+    transition-duration: var(--dur-fast);
+  }
 </style>

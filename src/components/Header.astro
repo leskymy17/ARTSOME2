@@ -90,6 +90,12 @@ const isActive = (path: string) =>
     if (nav) nav.hidden = open;
     document.body.classList.toggle('nav-open', !open);
   });
+
+  // Povýšení hlavičky po odscrollování (jemný stín + skrytá linka).
+  const header = document.querySelector('.header');
+  const onScroll = () => header?.classList.toggle('is-scrolled', window.scrollY > 8);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
 </script>
 
 <style>
@@ -99,6 +105,12 @@ const isActive = (path: string) =>
     z-index: 100;
     background: var(--paper);
     border-bottom: 1px solid var(--blue-line);
+    transition: box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  }
+  /* Po odscrollování hlavička jemně „vzlétne“ nad obsah. */
+  .header.is-scrolled {
+    box-shadow: 0 6px 24px -14px rgba(20, 28, 120, .5);
+    border-bottom-color: transparent;
   }
 
   .header__row {
@@ -118,17 +130,33 @@ const isActive = (path: string) =>
   }
 
   .header__link {
+    position: relative;
     display: inline-flex;
     align-items: center;
     gap: .3rem;
     font-weight: 500;
     color: var(--ink);
     padding-block: .5rem;
-    border-bottom: 2px solid transparent;
-    transition: color .2s;
+    transition: color var(--dur) var(--ease);
+  }
+  /* Podtržení najíždí zleva místo skokového rámečku. */
+  .header__link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--blue);
+    border-radius: 2px;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur) var(--ease);
   }
   .header__link:hover { color: var(--blue); }
-  .header__link.is-active { color: var(--blue); border-bottom-color: var(--blue); }
+  .header__link:hover::after { transform: scaleX(1); }
+  .header__link.is-active { color: var(--blue); }
+  .header__link.is-active::after { transform: scaleX(1); }
 
   /* Rozbalovací submenu Služby */
   .header__item--has-sub { position: relative; }

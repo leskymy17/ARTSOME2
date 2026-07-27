@@ -51,5 +51,8 @@
 
   /* ---- Layout & animace ---- */
   --max:  1200px;
-  --ease: cubic-bezier(.22, 1, .36, 1);
+  --ease: cubic-bezier(.22, 1, .36, 1);   /* sebevědomý dojezd (ease-out) */
+  --dur-fast: 140ms;   /* okamžitá odezva (press, drobný stav) */
+  --dur:      240ms;   /* běžná změna stavu */
+  --dur-slow: 560ms;   /* autorský vstup, překryv, přechod pohledu */
 }

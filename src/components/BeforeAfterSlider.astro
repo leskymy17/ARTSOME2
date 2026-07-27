@@ -54,16 +54,47 @@ const id = `ba-${Math.random().toString(36).slice(2, 8)}`;
 </div>
 
 <script>
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   for (const root of document.querySelectorAll<HTMLElement>('.ba')) {
     const range = root.querySelector<HTMLInputElement>('.ba__range')!;
-    const update = () => root.style.setProperty('--pos', `${range.value}%`);
+    const setPos = (v: number) => root.style.setProperty('--pos', `${v}%`);
+    const update = () => setPos(Number(range.value));
     range.addEventListener('input', update);
     update();
+
+    // Jednorázová pozvánka: při prvním najetí do viewportu táhlo samo
+    // krátce přejede, aby dalo najevo, že je uchopitelné. Poté zůstane
+    // na 50 % a přepne zpět na okamžité (bez zpoždění) tažení.
+    if (reduceMotion) continue;
+
+    const io = new IntersectionObserver((entries, obs) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        obs.disconnect();
+        root.classList.add('is-hinting');
+        const steps = [50, 34, 66, 50];
+        steps.forEach((v, i) => setTimeout(() => setPos(v), 500 + i * 620));
+        setTimeout(() => root.classList.remove('is-hinting'), 500 + steps.length * 620);
+      }
+    }, { threshold: 0.55 });
+    io.observe(root);
   }
 </script>
 
 <style>
+  /* Registrace umožní plynulý přechod --pos (jinak by skákalo). */
+  @property --pos {
+    syntax: '<length-percentage>';
+    inherits: true;
+    initial-value: 50%;
+  }
+
   .ba { --pos: 50%; }
+
+  /* Během pozvánky animujeme plynule; při tažení je posun okamžitý
+     (--pos je registrovaná, takže se přechod propíše i do potomků). */
+  .ba.is-hinting { transition: --pos .6s var(--ease); }
 
   .ba__frame {
     position: relative;
