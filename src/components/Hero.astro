@@ -1,6 +1,8 @@
 ---
 /**
- * Hlavní hero homepage — nadpis, CTA, hodnocení a fotografická ukázka práce.
+ * Hero (V2) — full-bleed sekce s prolínajícími se fotkami na pozadí
+ * a pomalým Ken Burns zoomem. Obsah je přeuspořádaný: nahoře eyebrow +
+ * Firmy.cz badge, dole velký nadpis, CTA a napravo hodnocení + perex.
  */
 import { Image } from 'astro:assets';
 import { site } from '../data/site';
@@ -8,120 +10,153 @@ import Icon from './Icon.astro';
 import Button from './Button.astro';
 import RatingStars from './RatingStars.astro';
 
-import imgMain from '../assets/photo/ARTSOME.jpeg';
-import imgInset from '../assets/photo/ref-1.jpeg';
+import badge from '../assets/firmy-badge.webp';
+import bg1 from '../assets/photo/ARTSOME.jpeg';
+import bg2 from '../assets/photo/po.jpeg';
+import bg3 from '../assets/photo/natery/natery-15.webp';
+import bg4 from '../assets/photo/ref-2.jpeg';
+
+const slides = [
+  { img: bg1, alt: 'Dřevěná chata po kompletní renovaci nátěru' },
+  { img: bg2, alt: 'Prostor po kompletní rekonstrukci a výmalbě' },
+  { img: bg3, alt: 'Hotový nátěr plechové střechy' },
+  { img: bg4, alt: 'Dekorativní fototapeta a čerstvá výmalba' },
+];
 ---
 
 <section class="hero">
-  <div class="wrap hero__grid">
-    <div class="hero__content">
-      <p class="hero__eyebrow hero__enter" style="--enter-i:0">⭐ TOP FIRMA 2025 · Moravskoslezský kraj</p>
-
-      <h1 class="hero__title hero__enter" style="--enter-i:1">
-        Malířství, nátěry a <em>renovace</em> bez kompromisů
-      </h1>
-
-      <p class="hero__lead hero__enter" style="--enter-i:2">
-        Vymalujeme pokoj i celý objekt. Rychle, čistě a za rozumnou cenu —
-        od první barvy po závěrečný úklid.
-      </p>
-
-      <div class="hero__actions hero__enter" style="--enter-i:3">
-        <Button href={site.phoneHref} variant="inverse">
-          <Icon name="phone" /> {site.phone}
-        </Button>
-        <Button href="/kontakt/" variant="light">Cenová kalkulace zdarma</Button>
+  <div class="hero__bg" aria-hidden="true">
+    {slides.map((s, i) => (
+      <div class:list={['hero__slide', { 'is-active': i === 0 }]} data-slide>
+        <Image
+          src={s.img}
+          alt=""
+          width={1920}
+          widths={[960, 1440, 1920]}
+          sizes="100vw"
+          loading={i === 0 ? 'eager' : 'lazy'}
+          fetchpriority={i === 0 ? 'high' : undefined}
+        />
       </div>
+    ))}
+    <div class="hero__scrim"></div>
+  </div>
 
-      <div class="hero__trust hero__enter" style="--enter-i:4">
-        <a href={site.rating.firmy.url} target="_blank" rel="noopener" class="hero__trust-item">
-          <RatingStars />
-          <strong>{site.rating.firmy.score} na Firmy.cz</strong>
-          <span>{site.rating.firmy.count} recenzí</span>
-        </a>
-        <span class="hero__trust-sep" role="presentation"></span>
-        <span class="hero__trust-item">
-          <Icon name="broom" size={17} /> Pořádek po práci
-        </span>
-      </div>
-
-      <a href={site.rating.nejremeslnici.url} target="_blank" rel="noopener" class="hero__nr hero__enter" style="--enter-i:5">
-        <span class="hero__nr-stars" aria-hidden="true">★★★★★</span>
-        <strong>{site.rating.nejremeslnici.score}</strong>
-        <span>· {site.rating.nejremeslnici.count} hodnocení na NejŘemeslníci.cz</span>
+  <div class="wrap hero__inner">
+    <div class="hero__top">
+      <p class="hero__eyebrow">⭐ TOP FIRMA 2025 · Moravskoslezský kraj</p>
+      <a href={site.rating.firmy.url} target="_blank" rel="noopener" class="hero__badge" aria-label="Firmy.cz — TOP firma 2025, hodnocení firmy">
+        <Image src={badge} alt="Firmy.cz — TOP firma 2025" width={140} />
       </a>
     </div>
 
-    <div class="hero__visual">
-      <figure class="hero__photo hero__enter hero__enter--photo" style="--enter-i:2">
-        <span class="hero__tag">Renovace chaty — po</span>
-        <Image src={imgMain} alt="Dřevěná chata po kompletní renovaci nátěru" width={720} widths={[480, 720, 960]} sizes="(max-width: 900px) 92vw, 560px" loading="eager" fetchpriority="high" />
-      </figure>
-      <figure class="hero__photo hero__photo--inset hero__enter hero__enter--photo" style="--enter-i:4">
-        <span class="hero__tag hero__tag--accent">Výmalba interiéru</span>
-        <Image src={imgInset} alt="Čerstvě vymalovaný obývák s červenou akcentní stěnou" width={380} widths={[280, 380, 560]} sizes="(max-width: 900px) 50vw, 330px" loading="eager" />
-      </figure>
+    <div class="hero__bottom">
+      <h1 class="hero__title">
+        Malířství, nátěry a <em>renovace</em> bez kompromisů
+      </h1>
+
+      <div class="hero__row">
+        <div class="hero__actions">
+          <Button href={site.phoneHref} variant="inverse">
+            <Icon name="phone" /> {site.phone}
+          </Button>
+          <Button href="/kontakt/" variant="light">Cenová kalkulace zdarma</Button>
+        </div>
+
+        <div class="hero__aside">
+          <a href={site.rating.firmy.url} target="_blank" rel="noopener" class="hero__rating">
+            <RatingStars />
+            <strong>{site.rating.firmy.score} na Firmy.cz</strong>
+            <span>{site.rating.firmy.count} recenzí</span>
+          </a>
+          <p class="hero__lead">
+            Vymalujeme pokoj i celý objekt. Rychle, čistě a za rozumnou cenu —
+            od první barvy po závěrečný úklid.
+          </p>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
+<script>
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const slides = [...document.querySelectorAll<HTMLElement>('.hero__slide')];
+
+  if (slides.length > 1 && !reduceMotion) {
+    let cur = 0;
+
+    // První snímek je aktivní už ze serveru — zoom spustíme až po prvním
+    // snímku, aby přechod transformace opravdu naběhl (ne skokem).
+    requestAnimationFrame(() => slides[0].classList.add('is-zooming'));
+
+    setInterval(() => {
+      const next = (cur + 1) % slides.length;
+      slides[next].classList.add('is-active', 'is-zooming');
+      slides[cur].classList.remove('is-active');
+      // zoom u odcházejícího snímku resetujeme až po prolnutí (skryté).
+      const leaving = slides[cur];
+      setTimeout(() => leaving.classList.remove('is-zooming'), 1600);
+      cur = next;
+    }, 5000);
+  }
+</script>
+
 <style>
   .hero {
     position: relative;
-    background: var(--blue);
+    display: flex;
+    min-height: min(920px, 88svh);
     color: #fff;
     overflow: hidden;
+    background: var(--blue-ink);
   }
 
-  /* ---- Autorský vstup hero (jediný „focal moment“ webu) ----
-     Obsah i fotky najíždějí v sekvenci hned po načtení. Skryté jsou
-     jen s html.js (nastaveno v <head> ještě před vykreslením), takže
-     bez JS je vše rovnou vidět. */
-  :global(html.js) .hero__enter {
+  /* ---- Pozadí: prolínající se fotky + Ken Burns ---- */
+  .hero__bg { position: absolute; inset: 0; z-index: 0; }
+
+  .hero__slide {
+    position: absolute;
+    inset: 0;
     opacity: 0;
-    transform: translateY(20px);
-    animation: hero-rise var(--dur-slow) var(--ease) forwards;
-    animation-delay: calc(var(--enter-i, 0) * 90ms + 60ms);
+    transition: opacity 1.6s var(--ease);
   }
+  .hero__slide.is-active { opacity: 1; }
 
-  :global(html.js) .hero__enter--photo {
-    transform: translateY(24px) scale(.965);
-    animation-name: hero-rise-photo;
+  .hero__slide :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1);
+    transition: transform 6.5s ease-out;
+    will-change: transform;
   }
+  .hero__slide.is-zooming :global(img) { transform: scale(1.09); }
 
-  @keyframes hero-rise {
-    to { opacity: 1; transform: none; }
-  }
-  @keyframes hero-rise-photo {
-    to { opacity: 1; transform: none; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    :global(html.js) .hero__enter {
-      opacity: 1;
-      transform: none;
-      animation: none;
-    }
-  }
-
-  /* jemné světelné přechody v pozadí */
-  .hero::before {
-    content: '';
+  /* Scrim pro čitelnost bílého textu — silnější dole (nadpis, CTA). */
+  .hero__scrim {
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(120% 90% at 85% 10%, rgba(255, 255, 255, .12), transparent 55%),
-      radial-gradient(80% 60% at 0% 100%, rgba(255, 122, 77, .18), transparent 60%);
-    pointer-events: none;
+      linear-gradient(90deg, rgba(9, 12, 45, .70) 0%, rgba(9, 12, 45, .30) 55%, rgba(9, 12, 45, .10) 100%),
+      linear-gradient(0deg, rgba(9, 12, 45, .80) 0%, rgba(9, 12, 45, .25) 42%, rgba(9, 12, 45, .35) 100%);
   }
 
-  .hero__grid {
+  /* ---- Obsah ---- */
+  .hero__inner {
     position: relative;
-    display: grid;
-    grid-template-columns: 1.05fr .95fr;
-    gap: var(--sp-12);
-    align-items: center;
-    padding-block: 74px 96px;
+    z-index: 1;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding-block: var(--sp-8) var(--sp-12);
+  }
+
+  .hero__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--sp-4);
   }
 
   .hero__eyebrow {
@@ -133,133 +168,94 @@ import imgInset from '../assets/photo/ref-1.jpeg';
     letter-spacing: .08em;
     text-transform: uppercase;
     background: rgba(255, 255, 255, .12);
-    border: 1px solid rgba(255, 255, 255, .25);
-    padding: .45rem .9rem;
+    border: 1px solid rgba(255, 255, 255, .28);
+    padding: .5rem 1rem;
     border-radius: var(--radius-pill);
-    margin-bottom: var(--sp-6);
+    backdrop-filter: blur(6px);
   }
+
+  .hero__badge {
+    flex: 0 0 auto;
+    transition: transform var(--dur) var(--ease);
+    filter: drop-shadow(0 8px 24px rgba(0, 0, 0, .35));
+  }
+  .hero__badge:hover { transform: translateY(-3px) rotate(-3deg); }
+  .hero__badge :global(img) { width: clamp(84px, 9vw, 132px); height: auto; }
+
+  /* ---- Dolní blok ---- */
+  .hero__bottom { margin-top: auto; }
 
   .hero__title {
-    font-size: var(--h1);
+    font-size: clamp(2.6rem, 6.4vw, 5.1rem);
     font-weight: 700;
+    line-height: 1.02;
+    letter-spacing: -.025em;
     color: #fff;
-    margin-bottom: var(--sp-4);
-  }
-
-  .hero__title em {
-    font-style: normal;
-    color: var(--accent-soft);
-  }
-
-  .hero__lead {
-    font-size: var(--text-lg);
-    color: rgba(255, 255, 255, .86);
-    max-width: 34ch;
+    max-width: 15ch;               /* drží nadpis v bloku, ne přes celou šířku */
+    text-wrap: balance;
     margin-bottom: var(--sp-8);
+    text-shadow: 0 2px 40px rgba(0, 0, 0, .35);
+  }
+  .hero__title em { font-style: normal; color: var(--accent-soft); }
+
+  .hero__row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--sp-8);
+    flex-wrap: wrap;
   }
 
   .hero__actions {
     display: flex;
+    gap: var(--sp-4);
+    flex-wrap: wrap;
+  }
+
+  /* Hero CTA jsou o ~30 % větší než výchozí tlačítka. */
+  .hero__actions :global(.btn) {
+    font-size: 1.27rem;
+    padding: 1.18rem 2rem;
+  }
+  .hero__actions :global(.btn svg) { width: 23px; height: 23px; }
+
+  .hero__aside {
+    max-width: 42ch;
+    display: grid;
     gap: var(--sp-3);
-    flex-wrap: wrap;
-    margin-bottom: var(--sp-8);
   }
 
-  .hero__trust {
-    display: flex;
-    align-items: center;
-    gap: var(--sp-6);
-    flex-wrap: wrap;
-    font-size: .9rem;
-    color: rgba(255, 255, 255, .85);
-  }
-
-  .hero__trust-item {
+  .hero__rating {
     display: inline-flex;
     align-items: center;
-    gap: .45rem;
+    gap: .5rem;
+    font-size: .95rem;
+    color: rgba(255, 255, 255, .9);
   }
-  .hero__trust-item strong { color: #fff; }
-  a.hero__trust-item:hover strong { text-decoration: underline; }
+  .hero__rating strong { color: #fff; font-family: var(--font-head); }
+  .hero__rating:hover strong { text-decoration: underline; }
 
-  .hero__trust-sep {
-    width: 1px;
-    height: 18px;
-    background: rgba(255, 255, 255, .25);
-  }
-
-  .hero__nr {
-    display: inline-flex;
-    align-items: center;
-    gap: .55rem;
-    background: rgba(255, 255, 255, .12);
-    border: 1px solid rgba(255, 255, 255, .25);
-    border-radius: var(--radius-pill);
-    padding: .4rem .9rem;
-    margin-top: var(--sp-6);
-    font-size: .85rem;
-    transition: background .2s;
-  }
-  .hero__nr:hover { background: rgba(255, 255, 255, .2); }
-  .hero__nr-stars { color: var(--star); letter-spacing: 1px; }
-  .hero__nr strong { font-family: var(--font-head); }
-  .hero__nr span:last-child { color: rgba(255, 255, 255, .75); }
-
-  /* ---- Vizuál ---- */
-  .hero__visual { position: relative; }
-
-  .hero__photo {
-    position: relative;
-    border-radius: var(--radius);
-    overflow: hidden;
-    box-shadow: 0 30px 70px -20px rgba(0, 0, 0, .5);
-  }
-  .hero__photo :global(img) {
-    width: 100%;
-    height: 430px;
-    object-fit: cover;
+  .hero__lead {
+    font-size: 1.06rem;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, .9);
+    text-shadow: 0 1px 20px rgba(0, 0, 0, .3);
   }
 
-  .hero__photo--inset {
-    position: absolute;
-    right: -26px;
-    bottom: -26px;
-    width: 58%;
-    border: 5px solid var(--blue);
-    box-shadow: 0 22px 50px -16px rgba(0, 0, 0, .55);
-  }
-  .hero__photo--inset :global(img) { height: 200px; }
-
-  .hero__tag {
-    position: absolute;
-    z-index: 1;
-    top: 14px;
-    left: 14px;
-    background: rgba(14, 18, 82, .85);
-    color: #fff;
-    font-size: .72rem;
-    font-weight: 600;
-    letter-spacing: .06em;
-    text-transform: uppercase;
-    padding: .35rem .7rem;
-    border-radius: var(--radius-pill);
-    backdrop-filter: blur(4px);
+  @media (max-width: 860px) {
+    .hero { min-height: min(760px, 90svh); }
+    .hero__row { flex-direction: column; align-items: stretch; gap: var(--sp-6); }
+    .hero__aside { max-width: none; }
+    .hero__actions :global(.btn) { flex: 1; justify-content: center; }
   }
 
-  .hero__tag--accent {
-    background: var(--accent);
-    top: auto;
-    bottom: 14px;
+  @media (max-width: 480px) {
+    .hero__eyebrow { font-size: .72rem; padding: .4rem .7rem; }
+    .hero__badge :global(img) { width: 74px; }
   }
 
-  @media (max-width: 900px) {
-    .hero__grid {
-      grid-template-columns: 1fr;
-      padding-block: 48px 72px;
-      gap: var(--sp-8);
-    }
-    .hero__photo :global(img) { height: 320px; }
-    .hero__photo--inset { right: 0; bottom: -30px; }
-    .hero__visual { margin-bottom: var(--sp-6); }
+  @media (prefers-reduced-motion: reduce) {
+    .hero__slide :global(img) { transition: none; }
+    .hero__slide.is-zooming :global(img) { transform: scale(1); }
   }
 </style>
