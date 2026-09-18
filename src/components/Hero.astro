@@ -44,7 +44,6 @@ const slides = [
 
   <div class="wrap hero__inner">
     <div class="hero__top">
-      <p class="hero__eyebrow">⭐ TOP FIRMA 2025 · Moravskoslezský kraj</p>
       <a href={site.rating.firmy.url} target="_blank" rel="noopener" class="hero__badge" aria-label="Firmy.cz — TOP firma 2025, hodnocení firmy">
         <Image src={badge} alt="Firmy.cz — TOP firma 2025" width={140} />
       </a>
@@ -155,23 +154,8 @@ const slides = [
   .hero__top {
     display: flex;
     align-items: flex-start;
-    justify-content: space-between;
+    justify-content: flex-end;
     gap: var(--sp-4);
-  }
-
-  .hero__eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: .5rem;
-    font-size: .82rem;
-    font-weight: 600;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    background: rgba(255, 255, 255, .12);
-    border: 1px solid rgba(255, 255, 255, .28);
-    padding: .5rem 1rem;
-    border-radius: var(--radius-pill);
-    backdrop-filter: blur(6px);
   }
 
   .hero__badge {
@@ -250,7 +234,6 @@ const slides = [
   }
 
   @media (max-width: 480px) {
-    .hero__eyebrow { font-size: .72rem; padding: .4rem .7rem; }
     .hero__badge :global(img) { width: 74px; }
   }
 
