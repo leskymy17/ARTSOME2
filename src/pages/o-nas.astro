@@ -1,0 +1,45 @@
+---
+/**
+ * O nás — příběh firmy, jak pracujeme a kde působíme.
+ * Nahrazuje dřívější sekci #onas na homepage.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import AboutStoryRow from '../components/AboutStoryRow.astro';
+import AreaCoverage from '../components/AreaCoverage.astro';
+import RatingBadges from '../components/RatingBadges.astro';
+import { site } from '../data/site';
+import { aboutStories } from '../data/about';
+---
+
+<BaseLayout
+  title="O nás — ARTSOME | Malířství, nátěry a renovace"
+  description={`Poznejte ${site.name} — jak jsme začali, jak pracujeme a kde v Moravskoslezském kraji působíme. Hodnocení ${site.rating.firmy.score} na Firmy.cz.`}
+>
+  <PageHero title="O nás" crumbs={[{ label: 'O nás' }]}>
+    Jsme malíři a natěrači z Havířova. Řemeslu rozumíme od základu a stavíme
+    na tom, co je v oboru vzácné — spolehlivost, pořádek a jasná domluva.
+  </PageHero>
+
+  <section class="section">
+    <div class="wrap about-stories">
+      {aboutStories.map((story) => <AboutStoryRow {...story} />)}
+    </div>
+  </section>
+
+  <!-- HODNOCENÍ -->
+  <section class="section">
+    <div class="wrap">
+      <RatingBadges />
+    </div>
+  </section>
+
+  <AreaCoverage />
+</BaseLayout>
+
+<style>
+  .about-stories {
+    display: grid;
+    gap: var(--sp-16);
+  }
+</style>

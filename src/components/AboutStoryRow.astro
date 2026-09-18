@@ -1,0 +1,87 @@
+---
+/**
+ * Řádek příběhu firmy — fotka + text, na desktopu střídavě vlevo/vpravo.
+ * Používá se na stránce O nás, data v src/data/about.ts.
+ */
+import { Image } from 'astro:assets';
+import type { AboutStory } from '../data/about';
+
+type Props = AboutStory;
+
+const { kicker, title, text, image, imageAlt, reverse = false } = Astro.props;
+---
+
+<div class:list={['story reveal', { 'story--reverse': reverse }]}>
+  <figure class="story__photo">
+    <Image
+      src={image}
+      alt={imageAlt}
+      width={640}
+      widths={[420, 640, 900]}
+      sizes="(max-width: 900px) 92vw, 560px"
+    />
+  </figure>
+  <div class="story__content">
+    <span class="story__kicker">{kicker}</span>
+    <h2 class="story__title">{title}</h2>
+    {text.map((paragraph) => <p class="story__text">{paragraph}</p>)}
+  </div>
+</div>
+
+<style>
+  .story {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-16);
+    align-items: center;
+  }
+
+  .story--reverse .story__photo { order: 2; }
+  .story--reverse .story__content { order: 1; }
+
+  .story__photo {
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+
+  .story__photo :global(img) {
+    width: 100%;
+    height: 420px;
+    object-fit: cover;
+  }
+
+  .story__kicker {
+    display: inline-block;
+    font-family: var(--font-head);
+    font-size: .8rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: var(--sp-3);
+  }
+
+  .story__title {
+    font-size: var(--h2);
+    margin-bottom: var(--sp-4);
+  }
+
+  .story__text {
+    color: var(--ink-soft);
+    margin-bottom: var(--sp-3);
+  }
+  .story__text:last-child { margin-bottom: 0; }
+
+  @media (max-width: 900px) {
+    .story {
+      grid-template-columns: 1fr;
+      gap: var(--sp-6);
+    }
+    .story--reverse .story__photo,
+    .story--reverse .story__content {
+      order: initial;
+    }
+    .story__photo :global(img) { height: 260px; }
+  }
+</style>

@@ -1,0 +1,99 @@
+---
+/**
+ * Dva boxy s hodnocením (Firmy.cz, NejŘemeslníci.cz) — logo, oddělovač,
+ * číslo a řada hvězdiček. Používá se na stránce O nás.
+ */
+import { Image } from 'astro:assets';
+import { site } from '../data/site';
+import firmyLogo from '../assets/firmy.cz.png';
+import nejremeslniciLogo from '../assets/nejremeslnici.png';
+import starIcon from '../assets/star.svg';
+
+const badges = [
+  {
+    logo: nejremeslniciLogo,
+    alt: 'NejŘemeslníci.cz',
+    score: site.rating.nejremeslnici.score,
+    href: site.rating.nejremeslnici.url,
+  },
+  {
+    logo: firmyLogo,
+    alt: 'Firmy.cz — TOP firma 2025',
+    score: site.rating.firmy.score,
+    href: site.rating.firmy.url,
+  },
+];
+---
+
+<div class="ratings reveal">
+  {badges.map((badge) => (
+    <a href={badge.href} target="_blank" rel="noopener" class="ratings__item">
+      <Image src={badge.logo} alt={badge.alt} width={260} class="ratings__logo" />
+      <span class="ratings__divider" aria-hidden="true"></span>
+      <span class="ratings__score">
+        <strong>{badge.score}</strong>
+        <span class="ratings__stars" aria-hidden="true">
+          {Array.from({ length: 5 }).map(() => (
+            <img src={starIcon.src} width="18" height="17" alt="" />
+          ))}
+        </span>
+      </span>
+    </a>
+  ))}
+</div>
+
+<style>
+  .ratings {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--sp-6);
+  }
+
+  .ratings__item {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-6);
+    background: var(--paper-dim);
+    border-radius: var(--radius);
+    padding: var(--sp-6) var(--sp-8);
+    transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+  }
+
+  .ratings__item:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .ratings__logo { width: 122px; height: auto; flex: 0 0 auto; }
+
+  .ratings__divider {
+    width: 1px;
+    align-self: stretch;
+    background: var(--blue-line);
+  }
+
+  .ratings__score {
+    display: grid;
+    gap: .4rem;
+  }
+
+  .ratings__score strong {
+    font-family: var(--font-head);
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: var(--blue-ink);
+    line-height: 1;
+  }
+
+  .ratings__stars {
+    display: flex;
+    gap: .25rem;
+  }
+
+  @media (max-width: 480px) {
+    .ratings__item { gap: var(--sp-4); padding: var(--sp-4) var(--sp-6); }
+    .ratings__logo { width: 94px; }
+    .ratings__score strong { font-size: 1.7rem; }
+  }
+</style>

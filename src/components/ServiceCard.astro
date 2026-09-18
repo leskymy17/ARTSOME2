@@ -31,7 +31,7 @@ const { service } = Astro.props;
       <a href={`/sluzby/${service.slug}/`} class="svc__link-cover">{service.title}</a>
     </h3>
     <span class="svc__more">
-      Více o službě <Icon name="arrow-right" size={15} />
+      Více o službě <Icon name="arrow-right" size={22} />
     </span>
   </div>
 </article>
@@ -43,7 +43,7 @@ const { service } = Astro.props;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    min-height: 340px;
+    min-height: 372px;
     isolation: isolate;
     transition:
       transform .35s var(--ease),
@@ -92,7 +92,7 @@ const { service } = Astro.props;
   }
 
   .svc__title {
-    font-size: var(--h2);
+    font-size: clamp(1.9rem, 2.1vw, 2.6rem);
     font-weight: 700;
     color: #fff;
   }
@@ -107,7 +107,7 @@ const { service } = Astro.props;
   .svc__more {
     font-family: var(--font-head);
     font-weight: 600;
-    font-size: .9rem;
+    font-size: .85rem;
     color: #fff;
     display: inline-flex;
     align-items: center;
