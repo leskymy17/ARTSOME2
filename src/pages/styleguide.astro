@@ -1,0 +1,624 @@
+---
+/**
+ * Interní style guide — jediné místo, kde je vidět celý design systém
+ * pohromadě: tokeny (barvy, typografie, spacing, tvary, stíny, pohyb)
+ * a živé ukázky komponent. Web se má vizuálně odvíjet od tohoto přehledu,
+ * ne naopak — když se změní token v src/styles/tokens.css, projeví se
+ * to automaticky i tady.
+ *
+ * Není v hlavní navigaci — je to nástroj pro vývoj, ne pro zákazníky.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHead from '../components/SectionHead.astro';
+import Icon from '../components/Icon.astro';
+import Button from '../components/Button.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import PageHero from '../components/PageHero.astro';
+import ServiceCard from '../components/ServiceCard.astro';
+import AboutStoryRow from '../components/AboutStoryRow.astro';
+import RatingStars from '../components/RatingStars.astro';
+import RatingBadges from '../components/RatingBadges.astro';
+import TrustStrip from '../components/TrustStrip.astro';
+import AreaCoverage from '../components/AreaCoverage.astro';
+import ProcessSteps from '../components/ProcessSteps.astro';
+import FaqAccordion from '../components/FaqAccordion.astro';
+import RefCarousel from '../components/RefCarousel.astro';
+import LeadForm from '../components/LeadForm.astro';
+
+import { services } from '../data/services';
+import { aboutStories } from '../data/about';
+import { faq } from '../data/faq';
+import { gallery } from '../data/gallery';
+
+const colors = [
+  { name: '--blue', hex: '#1f2bbf', desc: 'primární — CTA, odkazy, hero pozadí' },
+  { name: '--blue-deep', hex: '#161c8f', desc: 'hover primárních prvků' },
+  { name: '--blue-ink', hex: '#0e1252', desc: 'nadpisy na světlém pozadí' },
+  { name: '--blue-soft', hex: '#eef0fb', desc: 'jemné podkladové plochy', border: true },
+  { name: '--blue-line', hex: '#d9ddf6', desc: 'rámečky, oddělovače', border: true },
+  { name: '--accent', hex: '#ff7a4d', desc: 'akcent — štítek „Po", zvýraznění v hero' },
+  { name: '--accent-soft', hex: '#ffd9c9', desc: 'zvýrazněné slovo v H1 na modré', border: true },
+  { name: '--paper', hex: '#ffffff', desc: 'základní plocha', border: true },
+  { name: '--paper-dim', hex: '#f6f6f8', desc: 'střídání sekcí', border: true },
+  { name: '--ink', hex: '#15161c', desc: 'základní text' },
+  { name: '--ink-soft', hex: '#565a6e', desc: 'sekundární text' },
+  { name: '--star', hex: '#ffb400', desc: 'hvězdičky hodnocení' },
+  { name: '--ok', hex: '#1a9e5c', desc: 'úspěch — odeslaný formulář, fajfky' },
+] as const;
+
+const spacing = [
+  { name: '--sp-1', value: '.25rem', px: '4px' },
+  { name: '--sp-2', value: '.5rem', px: '8px' },
+  { name: '--sp-3', value: '.75rem', px: '12px' },
+  { name: '--sp-4', value: '1rem', px: '16px' },
+  { name: '--sp-6', value: '1.5rem', px: '24px' },
+  { name: '--sp-8', value: '2rem', px: '32px' },
+  { name: '--sp-12', value: '3rem', px: '48px' },
+  { name: '--sp-16', value: '4rem', px: '64px' },
+  { name: '--sp-section', value: 'clamp(3.5rem, 8vw, 5.5rem)', px: '56–88px' },
+] as const;
+
+const typeScale = [
+  { name: '--h1', sample: 'Malířství, nátěry a renovace', px: '33,6–56px', tag: 'h1' },
+  { name: '--h2', sample: 'Čtyři věci, které umíme nejlépe', px: '26,4–41px', tag: 'h2' },
+  { name: '--h3', sample: 'Karta služby', px: '19px', tag: 'h3' },
+  { name: '--text-lg', sample: 'Zvýrazněný odstavec (perex)', px: '17,9px', tag: 'p' },
+  { name: '--text-base', sample: 'Běžný text odstavce', px: '16px', tag: 'p' },
+  { name: '--text-sm', sample: 'Drobný, doplňkový text', px: '14,4px', tag: 'p' },
+] as const;
+
+const shapes = [
+  { name: '--radius', value: '18px', desc: 'karty, fotky, hlavní bloky' },
+  { name: '--radius-sm', value: '12px', desc: 'menší karty, odznaky, tlačítka formuláře' },
+  { name: '--radius-pill', value: '999px', desc: 'tlačítka, štítky, filtry' },
+] as const;
+
+const shadows = [
+  { name: '--shadow', value: '0 10px 40px -12px rgba(20,28,120,.22)', desc: 'hover karet, hlavní zvýraznění' },
+  { name: '--shadow-sm', value: '0 4px 18px -8px rgba(20,28,120,.25)', desc: 'jemnější zvýraznění, odznaky' },
+] as const;
+
+const motion = [
+  { name: '--dur-fast', value: '140ms', desc: 'okamžitá odezva — stisk tlačítka' },
+  { name: '--dur', value: '240ms', desc: 'běžná změna stavu — hover, fade' },
+  { name: '--dur-slow', value: '560ms', desc: 'autorský vstup — reveal, přechod pohledu' },
+] as const;
+
+const iconNames = [
+  'phone', 'mail', 'check', 'arrow-right', 'chevron-down', 'map-pin',
+  'clock', 'shield', 'sparkles', 'broom', 'instagram', 'close',
+] as const;
+
+const toc = [
+  { href: '#barvy', label: 'Barvy' },
+  { href: '#typografie', label: 'Typografie' },
+  { href: '#spacing', label: 'Spacing' },
+  { href: '#tvary', label: 'Tvary a stíny' },
+  { href: '#pohyb', label: 'Pohyb' },
+  { href: '#ikony', label: 'Ikony' },
+  { href: '#tlacitka', label: 'Tlačítka' },
+  { href: '#nadpisy', label: 'Nadpisy a drobečky' },
+  { href: '#karty', label: 'Karty' },
+  { href: '#hodnoceni', label: 'Hodnocení a důvěra' },
+  { href: '#kroky-faq', label: 'Kroky, FAQ, karusel' },
+  { href: '#formular', label: 'Formulář' },
+  { href: '#stranky', label: 'Sekce stránek' },
+] as const;
+---
+
+<BaseLayout
+  title="Style guide — ARTSOME (interní)"
+  description="Interní přehled designových tokenů a komponent webu ARTSOME."
+>
+  <section class="sg-intro">
+    <div class="wrap">
+      <p class="sg-kicker">Interní dokumentace — není v menu</p>
+      <h1 class="sg-title">Style guide &amp; komponenty</h1>
+      <p class="sg-lead">
+        Přehled všech designových tokenů (barvy, typografie, spacing, tvary, stíny, pohyb)
+        a komponent, ze kterých je web poskládaný. Vše na této stránce je živé — čte se
+        přímo z <code>src/styles/tokens.css</code> a ze skutečných komponent, takže když se
+        upraví token nebo komponenta, projeví se to automaticky i tady.
+      </p>
+      <nav class="sg-toc" aria-label="Rychlá navigace po sekcích">
+        {toc.map((item) => <a href={item.href}>{item.label}</a>)}
+      </nav>
+    </div>
+  </section>
+
+  <!-- BARVY -->
+  <section class="section sg-section" id="barvy">
+    <div class="wrap">
+      <SectionHead kicker="Tokeny" title="Barvy" />
+      <div class="sg-color-grid">
+        {colors.map((c) => (
+          <div class="sg-color-card">
+            <div class:list={['sg-color-swatch', { 'sg-color-swatch--border': c.border }]} style={`background: var(${c.name})`} />
+            <code class="sg-color-name">{c.name}</code>
+            <span class="sg-color-hex">{c.hex}</span>
+            <p class="sg-color-desc">{c.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- TYPOGRAFIE -->
+  <section class="section section--dim sg-section" id="typografie">
+    <div class="wrap">
+      <SectionHead kicker="Tokeny" title="Typografie" />
+
+      <div class="sg-fonts">
+        <div class="sg-font-card" style="font-family: var(--font-head); font-weight: 700;">
+          <span class="sg-font-label">--font-head · Poppins</span>
+          <span class="sg-font-sample">Aa Bb Cc 0123</span>
+        </div>
+        <div class="sg-font-card" style="font-family: var(--font-body);">
+          <span class="sg-font-label">--font-body · Inter</span>
+          <span class="sg-font-sample">Aa Bb Cc 0123</span>
+        </div>
+      </div>
+
+      <div class="sg-type-scale">
+        {typeScale.map((t) => (
+          <div class="sg-type-row">
+            <div class="sg-type-sample" style={`font-size: var(${t.name}); ${t.tag === 'p' ? '' : 'font-family: var(--font-head); font-weight: 700; color: var(--blue-ink);'}`}>
+              {t.sample}
+            </div>
+            <div class="sg-type-meta">
+              <code>{t.name}</code>
+              <span>{t.px}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- SPACING -->
+  <section class="section sg-section" id="spacing">
+    <div class="wrap">
+      <SectionHead kicker="Tokeny" title="Spacing" />
+      <p class="sg-note">Škála po 4px — používá se pro mezery (gap), padding i odsazení sekcí.</p>
+      <div class="sg-spacing-list">
+        {spacing.map((s) => (
+          <div class="sg-spacing-row">
+            <code class="sg-spacing-name">{s.name}</code>
+            <div class="sg-spacing-bar-track">
+              <div class="sg-spacing-bar" style={`width: var(${s.name})`} />
+            </div>
+            <span class="sg-spacing-px">{s.px}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- TVARY A STÍNY -->
+  <section class="section section--dim sg-section" id="tvary">
+    <div class="wrap">
+      <SectionHead kicker="Tokeny" title="Tvary a stíny" />
+      <div class="sg-shapes-grid">
+        {shapes.map((s) => (
+          <div class="sg-shape-card">
+            <div class="sg-shape-box" style={`border-radius: var(${s.name})`} />
+            <code>{s.name}</code>
+            <span class="sg-shape-value">{s.value}</span>
+            <p class="sg-color-desc">{s.desc}</p>
+          </div>
+        ))}
+        {shadows.map((s) => (
+          <div class="sg-shape-card">
+            <div class="sg-shape-box sg-shape-box--shadow" style={`box-shadow: var(${s.name})`} />
+            <code>{s.name}</code>
+            <span class="sg-shape-value">{s.desc}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- POHYB -->
+  <section class="section sg-section" id="pohyb">
+    <div class="wrap">
+      <SectionHead kicker="Tokeny" title="Pohyb" />
+      <p class="sg-note">
+        <code>--ease: cubic-bezier(.22, 1, .36, 1)</code> — sebevědomý dojezd (ease-out),
+        používá se u všech přechodů. Najetím myší na box vpravo vyzkoušíte rychlost.
+      </p>
+      <div class="sg-motion-grid">
+        {motion.map((m) => (
+          <div class="sg-motion-card">
+            <div>
+              <code>{m.name}</code>
+              <span class="sg-shape-value">{m.value}</span>
+              <p class="sg-color-desc">{m.desc}</p>
+            </div>
+            <div class="sg-motion-demo" style={`transition: transform ${m.value} var(--ease)`}>
+              <Icon name="arrow-right" size={18} />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- IKONY -->
+  <section class="section section--dim sg-section" id="ikony">
+    <div class="wrap">
+      <SectionHead kicker="Komponenta" title="Ikony" />
+      <p class="sg-note">
+        Sdílené SVG ikony (<code>src/components/Icon.astro</code>) — stroke styl, výchozí
+        24×24. Nová ikona = nový klíč v mapě <code>icons</code>.
+      </p>
+      <div class="sg-icon-grid">
+        {iconNames.map((name) => (
+          <div class="sg-icon-card">
+            <Icon name={name} size={22} />
+            <code>{name}</code>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- TLAČÍTKA -->
+  <section class="section sg-section" id="tlacitka">
+    <div class="wrap">
+      <SectionHead kicker="Komponenta" title="Tlačítka" />
+      <p class="sg-note"><code>Button.astro</code> — varianty: primary, ghost, light, inverse.</p>
+      <div class="sg-buttons-row sg-buttons-row--light">
+        <Button href="#" variant="primary">Primary <Icon name="arrow-right" size={16} /></Button>
+        <Button href="#" variant="ghost">Ghost</Button>
+      </div>
+      <div class="sg-buttons-row sg-buttons-row--dark">
+        <Button href="#" variant="light">Light</Button>
+        <Button href="#" variant="inverse">Inverse</Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- NADPISY A DROBEČKY -->
+  <section class="section section--dim sg-section" id="nadpisy">
+    <div class="wrap">
+      <p class="sg-note"><code>SectionHead.astro</code> — kicker + H2 + volitelný perex, viz nadpisy na této stránce. <code>Breadcrumbs.astro</code>:</p>
+      <Breadcrumbs items={[{ label: 'Reference', href: '/reference/' }, { label: 'Ukázka' }]} />
+      <p class="sg-note" style="margin-top: var(--sp-8);"><code>PageHero.astro</code> — modré hero podstránek:</p>
+    </div>
+    <PageHero title="Ukázkový nadpis stránky" crumbs={[{ label: 'Style guide' }, { label: 'Ukázka' }]}>
+      Perex pod H1 — krátké shrnutí toho, co na stránce najdete.
+    </PageHero>
+  </section>
+
+  <!-- KARTY -->
+  <section class="section sg-section" id="karty">
+    <div class="wrap">
+      <SectionHead kicker="Komponenta" title="Karty" />
+      <p class="sg-note"><code>ServiceCard.astro</code>:</p>
+      <div class="sg-service-demo">
+        <ServiceCard service={services[0]!} />
+      </div>
+      <p class="sg-note" style="margin-top: var(--sp-12);"><code>AboutStoryRow.astro</code>:</p>
+      <AboutStoryRow {...aboutStories[0]!} />
+    </div>
+  </section>
+
+  <!-- HODNOCENÍ A DŮVĚRA -->
+  <section class="section section--dim sg-section" id="hodnoceni">
+    <div class="wrap">
+      <SectionHead kicker="Komponenta" title="Hodnocení a důvěra" />
+      <p class="sg-note"><code>RatingStars.astro</code>:</p>
+      <div class="sg-buttons-row">
+        <RatingStars />
+        <RatingStars count={3} />
+      </div>
+      <p class="sg-note" style="margin-top: var(--sp-8);"><code>RatingBadges.astro</code>:</p>
+      <RatingBadges />
+    </div>
+    <div class="wrap">
+      <p class="sg-note" style="margin-top: var(--sp-12);"><code>TrustStrip.astro</code>:</p>
+    </div>
+    <TrustStrip />
+  </section>
+
+  <!-- KROKY, FAQ, KARUSEL -->
+  <section class="section sg-section" id="kroky-faq">
+    <div class="wrap">
+      <SectionHead kicker="Komponenta" title="Kroky, FAQ a karusel" />
+      <p class="sg-note"><code>ProcessSteps.astro</code> (varianta <code>compact</code>):</p>
+      <ProcessSteps compact />
+
+      <p class="sg-note" style="margin-top: var(--sp-12);"><code>FaqAccordion.astro</code>:</p>
+      <FaqAccordion items={faq.slice(0, 3)} withSchema={false} />
+
+      <p class="sg-note" style="margin-top: var(--sp-12);"><code>RefCarousel.astro</code>:</p>
+      <RefCarousel items={gallery.slice(0, 6)} />
+    </div>
+  </section>
+
+  <!-- FORMULÁŘ -->
+  <section class="section section--dim sg-section" id="formular">
+    <div class="wrap">
+      <SectionHead kicker="Komponenta" title="Formulář" />
+      <p class="sg-note"><code>LeadForm.astro</code> — plně funkční, odesílá přes Web3Forms:</p>
+      <div class="sg-form-demo">
+        <LeadForm source="styleguide" />
+      </div>
+    </div>
+  </section>
+
+  <!-- SEKCE STRÁNEK -->
+  <section class="section sg-section" id="stranky">
+    <div class="wrap">
+      <SectionHead kicker="Sekce" title="Sekce stránek" />
+      <p class="sg-note">
+        Větší, samostatné bloky stránek — Header a Footer vidíš přímo na téhle stránce
+        (obaluje ji <code>BaseLayout.astro</code>), <code>AreaCoverage.astro</code> je
+        živě níž. Hero (fullscreen slideshow s Ken Burns efektem), kompletní
+        <code>GalleryGrid</code> s lightboxem a <code>ReviewsSection</code> jsou moc
+        těžké na duplikování zde — mrkni na ně přímo živé:
+        <a href="/">homepage</a>, <a href="/reference/">Reference</a>.
+      </p>
+    </div>
+    <AreaCoverage />
+  </section>
+</BaseLayout>
+
+<style>
+  /* ---- Intro ---- */
+  .sg-intro {
+    padding-block: var(--sp-12) var(--sp-8);
+    border-bottom: 1px solid var(--blue-line);
+  }
+
+  .sg-kicker {
+    display: inline-block;
+    font-family: var(--font-head);
+    font-size: .8rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: var(--sp-3);
+  }
+
+  .sg-title { font-size: var(--h1); margin-bottom: var(--sp-4); }
+
+  .sg-lead {
+    max-width: 70ch;
+    color: var(--ink-soft);
+    font-size: var(--text-lg);
+    margin-bottom: var(--sp-8);
+  }
+
+  .sg-lead code {
+    background: var(--blue-soft);
+    color: var(--blue-ink);
+    padding: .1rem .35rem;
+    border-radius: 6px;
+    font-size: .88em;
+  }
+
+  .sg-toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+  }
+
+  .sg-toc a {
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: .88rem;
+    color: var(--blue-ink);
+    background: var(--paper);
+    border: 1px solid var(--blue-line);
+    border-radius: var(--radius-pill);
+    padding: .5rem 1rem;
+    transition: border-color var(--dur) var(--ease), color var(--dur) var(--ease);
+  }
+
+  .sg-toc a:hover { border-color: var(--blue); color: var(--blue); }
+
+  /* ---- Obecné pomůcky ---- */
+  .sg-note {
+    color: var(--ink-soft);
+    font-size: .95rem;
+    margin-bottom: var(--sp-6);
+  }
+
+  .sg-note code, .sg-color-name, .sg-spacing-name, .sg-shape-card code,
+  .sg-motion-card code, .sg-icon-card code, .sg-type-meta code {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: .85em;
+    background: var(--paper-dim);
+    color: var(--blue-ink);
+    padding: .1rem .4rem;
+    border-radius: 6px;
+  }
+
+  .section--dim .sg-note code { background: var(--paper); }
+
+  /* ---- Barvy ---- */
+  .sg-color-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: var(--sp-6);
+  }
+
+  .sg-color-card { display: grid; gap: .3rem; }
+
+  .sg-color-swatch {
+    height: 88px;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .sg-color-swatch--border { border: 1px solid var(--blue-line); box-shadow: none; }
+
+  .sg-color-name { justify-self: start; margin-top: .3rem; }
+  .sg-color-hex { font-size: .8rem; color: var(--ink-soft); }
+  .sg-color-desc { font-size: .85rem; color: var(--ink-soft); }
+
+  /* ---- Typografie ---- */
+  .sg-fonts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--sp-6);
+    margin-bottom: var(--sp-12);
+  }
+
+  .sg-font-card {
+    background: var(--paper);
+    border: 1px solid var(--blue-line);
+    border-radius: var(--radius-sm);
+    padding: var(--sp-6);
+    display: grid;
+    gap: var(--sp-3);
+  }
+
+  .sg-font-label {
+    font-family: var(--font-body);
+    font-size: .8rem;
+    font-weight: 700;
+    color: var(--blue);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+  }
+
+  .sg-font-sample { font-size: 1.8rem; color: var(--blue-ink); }
+
+  .sg-type-scale { display: grid; gap: var(--sp-6); }
+
+  .sg-type-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--sp-6);
+    flex-wrap: wrap;
+    padding-bottom: var(--sp-6);
+    border-bottom: 1px solid var(--blue-line);
+  }
+
+  .sg-type-row:last-child { border-bottom: 0; padding-bottom: 0; }
+
+  .sg-type-sample { color: var(--ink); text-wrap: balance; }
+
+  .sg-type-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    flex: 0 0 auto;
+    color: var(--ink-soft);
+    font-size: .85rem;
+  }
+
+  /* ---- Spacing ---- */
+  .sg-spacing-list { display: grid; gap: var(--sp-3); }
+
+  .sg-spacing-row {
+    display: grid;
+    grid-template-columns: 110px 1fr 70px;
+    align-items: center;
+    gap: var(--sp-4);
+  }
+
+  .sg-spacing-bar-track {
+    background: var(--paper-dim);
+    border-radius: var(--radius-pill);
+    height: 14px;
+  }
+  .section--dim .sg-spacing-bar-track { background: var(--paper); }
+
+  .sg-spacing-bar {
+    height: 100%;
+    max-width: 100%;
+    background: var(--blue);
+    border-radius: var(--radius-pill);
+  }
+
+  .sg-spacing-px { color: var(--ink-soft); font-size: .85rem; text-align: right; }
+
+  /* ---- Tvary a stíny ---- */
+  .sg-shapes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--sp-6);
+  }
+
+  .sg-shape-card { display: grid; gap: .4rem; }
+
+  .sg-shape-box {
+    height: 88px;
+    background: var(--blue-soft);
+    border: 1px solid var(--blue-line);
+  }
+
+  .sg-shape-box--shadow { background: var(--paper); border-radius: var(--radius-sm); }
+
+  .sg-shape-value { font-size: .82rem; color: var(--ink-soft); word-break: break-word; }
+
+  /* ---- Pohyb ---- */
+  .sg-motion-grid { display: grid; gap: var(--sp-4); }
+
+  .sg-motion-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-6);
+    background: var(--paper);
+    border: 1px solid var(--blue-line);
+    border-radius: var(--radius-sm);
+    padding: var(--sp-4) var(--sp-6);
+  }
+
+  .sg-motion-demo {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    background: var(--blue);
+    color: #fff;
+    border-radius: 50%;
+  }
+
+  .sg-motion-card:hover .sg-motion-demo { transform: translateX(14px); }
+
+  /* ---- Ikony ---- */
+  .sg-icon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: var(--sp-4);
+  }
+
+  .sg-icon-card {
+    display: grid;
+    justify-items: center;
+    gap: .5rem;
+    background: var(--paper);
+    border: 1px solid var(--blue-line);
+    border-radius: var(--radius-sm);
+    padding: var(--sp-4);
+    color: var(--blue);
+  }
+
+  /* ---- Tlačítka ---- */
+  .sg-buttons-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-4);
+    padding: var(--sp-6);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--sp-4);
+  }
+
+  .sg-buttons-row--light { background: var(--paper-dim); }
+  .sg-buttons-row--dark { background: var(--blue); }
+
+  /* ---- Karty ---- */
+  .sg-service-demo { max-width: 320px; }
+
+  /* ---- Formulář ---- */
+  .sg-form-demo { max-width: 560px; }
+</style>

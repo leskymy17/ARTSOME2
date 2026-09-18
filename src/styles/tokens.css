@@ -28,7 +28,7 @@
   --text-base: 1rem;
   --text-lg:   1.12rem;
   --h1: clamp(2.1rem, 4.4vw, 3.5rem);
-  --h2: clamp(1.65rem, 3vw, 2.35rem);
+  --h2: clamp(1.65rem, 3vw, 2.5625rem);  /* 41px na desktopu — vědomý kontrast vůči h3 */
   --h3: 1.18rem;
 
   /* ---- Spacing (4px základ) ---- */

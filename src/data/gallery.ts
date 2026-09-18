@@ -19,8 +19,6 @@ export interface GalleryItem {
   alt: string;
   caption: string;
   category: 'malovani' | 'natery' | 'renovace' | 'podlahy';
-  /** Velikost buňky v bento gridu */
-  size?: 'wide' | 'tall';
 }
 
 export const galleryCategories = [
@@ -43,14 +41,14 @@ const nateryModules = import.meta.glob<{ default: ImageMetadata }>(
   { eager: true },
 );
 
-const nateryCaptions: Record<string, { alt: string; caption: string; size?: 'wide' | 'tall' }> = {
+const nateryCaptions: Record<string, { alt: string; caption: string }> = {
   'natery-01': { alt: 'Nátěr ploché střechy garáže červenou barvou', caption: 'Nátěr ploché střechy' },
   'natery-02': { alt: 'Plechová střecha s odlupujícím se nátěrem před renovací', caption: 'Střecha před nátěrem' },
-  'natery-03': { alt: 'Nátěr ploché střechy s maskováním spár', caption: 'Nátěr ploché střechy — spáry', size: 'wide' },
+  'natery-03': { alt: 'Nátěr ploché střechy s maskováním spár', caption: 'Nátěr ploché střechy — spáry' },
   'natery-04': { alt: 'Základní nátěr plechové střechy s páskovanými spoji', caption: 'Základní nátěr střechy' },
   'natery-05': { alt: 'Nátěr ploché střechy válečkem', caption: 'Nátěr střechy válečkem' },
-  'natery-06': { alt: 'Hotový lesklý červený nátěr plechové střechy', caption: 'Hotová plechová střecha', size: 'wide' },
-  'natery-07': { alt: 'Dřevěné schodiště obroušené do surového dřeva před nátěrem', caption: 'Schodiště — příprava', size: 'tall' },
+  'natery-06': { alt: 'Hotový lesklý červený nátěr plechové střechy', caption: 'Hotová plechová střecha' },
+  'natery-07': { alt: 'Dřevěné schodiště obroušené do surového dřeva před nátěrem', caption: 'Schodiště — příprava' },
   'natery-08': { alt: 'Nátěr vnitřního dřevěného schodiště, první vrstva', caption: 'Nátěr schodiště' },
   'natery-09': { alt: 'Bílý nátěr vnitřního schodiště', caption: 'Bílý nátěr schodiště' },
   'natery-10': { alt: 'Nátěr vnitřního schodiště u okna', caption: 'Nátěr schodiště u okna' },
@@ -60,11 +58,11 @@ const nateryCaptions: Record<string, { alt: string; caption: string; size?: 'wid
   'natery-14': { alt: 'Vybledlá plechová střecha před novým nátěrem', caption: 'Střecha před nátěrem' },
   'natery-15': { alt: 'Hotový hnědý nátěr plechové střechy', caption: 'Hnědý nátěr střechy' },
   'natery-16': { alt: 'Pohled shora na vybledlou střechu před nátěrem', caption: 'Střecha před nátěrem' },
-  'natery-17': { alt: 'Hotová hnědá plechová střecha rodinného domu', caption: 'Nátěr plechové střechy', size: 'wide' },
+  'natery-17': { alt: 'Hotová hnědá plechová střecha rodinného domu', caption: 'Nátěr plechové střechy' },
   'natery-18': { alt: 'Detail hotového nátěru sedlové plechové střechy', caption: 'Detail nátěru střechy' },
   'natery-19': { alt: 'Nátěr sedlové plechové střechy do hněda', caption: 'Nátěr sedlové střechy' },
   'natery-20': { alt: 'Hotová plechová střecha v krajině', caption: 'Hotová plechová střecha' },
-  'natery-21': { alt: 'Renovace dřevěné zárubně, nábytek zakrytý fólií', caption: 'Renovace zárubně — příprava', size: 'tall' },
+  'natery-21': { alt: 'Renovace dřevěné zárubně, nábytek zakrytý fólií', caption: 'Renovace zárubně — příprava' },
   'natery-22': { alt: 'Broušení a nátěr dřevěné zárubně dveří', caption: 'Broušení a nátěr zárubně' },
   'natery-23': { alt: 'Hotový nátěr dřevěné zárubně v tmavém odstínu', caption: 'Hotový nátěr zárubně' },
   'natery-24': { alt: 'Zárubně a dveře v interiéru po nátěru', caption: 'Zárubně po nátěru' },
@@ -72,7 +70,7 @@ const nateryCaptions: Record<string, { alt: string; caption: string; size?: 'wid
   'natery-26': { alt: 'Nátěr venkovního okenního rámu na fasádě domu', caption: 'Nátěr venkovního okna' },
   'natery-27': { alt: 'Nátěr venkovního parapetu a okenního rámu', caption: 'Nátěr venkovního parapetu' },
   'natery-28': { alt: 'Nátěr kovového zábradlí venkovního schodiště', caption: 'Nátěr venkovního zábradlí' },
-  'natery-29': { alt: 'Renovace venkovního dřevěného schodiště tmavou lazurou', caption: 'Venkovní dřevěné schodiště', size: 'wide' },
+  'natery-29': { alt: 'Renovace venkovního dřevěného schodiště tmavou lazurou', caption: 'Venkovní dřevěné schodiště' },
   'natery-30': { alt: 'Nátěr dřeva lazurou — detail struktury', caption: 'Nátěr dřeva lazurou' },
   'natery-31': { alt: 'Detail dřevěného prvku po nátěru lazurou', caption: 'Detail nátěru dřeva' },
 };
@@ -90,18 +88,17 @@ const nateryGallery: GalleryItem[] = Object.entries(nateryModules)
       alt: meta.alt,
       caption: meta.caption,
       category: 'natery' as const,
-      size: meta.size,
     };
   });
 
 export const gallery: GalleryItem[] = [
-  { image: artsome, alt: 'Dřevěná chata po renovaci nátěru, v pozadí hory', caption: 'Renovace chaty — Beskydy', category: 'renovace', size: 'wide' },
+  { image: artsome, alt: 'Dřevěná chata po renovaci nátěru, v pozadí hory', caption: 'Renovace chaty — Beskydy', category: 'renovace' },
   { image: ref4, alt: 'Detail renovované chaty — vchod, okno a zábradlí po novém nátěru', caption: 'Renovace chaty — detail vchodu', category: 'renovace' },
   { image: ref1, alt: 'Vymalovaný obývák s červenou akcentní stěnou', caption: 'Výmalba — akcentní stěna', category: 'malovani' },
-  { image: ref2, alt: 'Fototapeta s motivem knihovny a čerstvě vymalovaná žlutá stěna', caption: 'Fototapeta a výmalba', category: 'malovani', size: 'wide' },
+  { image: ref2, alt: 'Fototapeta s motivem knihovny a čerstvě vymalovaná žlutá stěna', caption: 'Fototapeta a výmalba', category: 'malovani' },
   { image: ref5, alt: 'Vymalovaný pokoj s modrou stěnou a renovovanými bílými dveřmi', caption: 'Výmalba pokoje — modrá stěna', category: 'malovani' },
-  { image: po, alt: 'Sklep přestavěný na obyvatelnou kancelář', caption: 'Rekonstrukce sklepa — po', category: 'podlahy', size: 'tall' },
-  { image: pred, alt: 'Původní stav sklepa před rekonstrukcí', caption: 'Rekonstrukce sklepa — před', category: 'podlahy', size: 'wide' },
+  { image: po, alt: 'Sklep přestavěný na obyvatelnou kancelář', caption: 'Rekonstrukce sklepa — po', category: 'podlahy' },
+  { image: pred, alt: 'Původní stav sklepa před rekonstrukcí', caption: 'Rekonstrukce sklepa — před', category: 'podlahy' },
   ...nateryGallery,
 ];
 

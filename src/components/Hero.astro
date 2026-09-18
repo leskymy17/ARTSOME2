@@ -14,13 +14,13 @@ import badge from '../assets/firmy-badge.webp';
 import bg1 from '../assets/photo/chata-hero.webp';
 import bg2 from '../assets/photo/po.jpeg';
 import bg3 from '../assets/photo/natery/natery-15.webp';
-import bg4 from '../assets/photo/ref-2.jpeg';
+import bg4 from '../assets/photo/hero-artsome.webp';
 
 const slides = [
   { img: bg1, alt: 'Dřevěná chata po kompletní renovaci nátěru' },
   { img: bg2, alt: 'Prostor po kompletní rekonstrukci a výmalbě' },
   { img: bg3, alt: 'Hotový nátěr plechové střechy' },
-  { img: bg4, alt: 'Dekorativní fototapeta a čerstvá výmalba' },
+  { img: bg4, alt: 'Firemní vozidla ARTSOME polepená logem' },
 ];
 ---
 
@@ -43,12 +43,6 @@ const slides = [
   </div>
 
   <div class="wrap hero__inner">
-    <div class="hero__top">
-      <a href={site.rating.firmy.url} target="_blank" rel="noopener" class="hero__badge" aria-label="Firmy.cz — TOP firma 2025, hodnocení firmy">
-        <Image src={badge} alt="Firmy.cz — TOP firma 2025" width={140} />
-      </a>
-    </div>
-
     <div class="hero__bottom">
       <h1 class="hero__title">
         Malířství, nátěry a <em>renovace</em> bez kompromisů
@@ -63,6 +57,9 @@ const slides = [
         </div>
 
         <div class="hero__aside">
+          <a href={site.rating.firmy.url} target="_blank" rel="noopener" class="hero__badge" aria-label="Firmy.cz — TOP firma 2025, hodnocení firmy">
+            <Image src={badge} alt="Firmy.cz — TOP firma 2025" width={280} />
+          </a>
           <a href={site.rating.firmy.url} target="_blank" rel="noopener" class="hero__rating">
             <RatingStars />
             <strong>{site.rating.firmy.score} na Firmy.cz</strong>
@@ -151,20 +148,13 @@ const slides = [
     padding-block: var(--sp-8) calc(var(--sp-12) + 72px);
   }
 
-  .hero__top {
-    display: flex;
-    align-items: flex-start;
-    justify-content: flex-end;
-    gap: var(--sp-4);
-  }
-
   .hero__badge {
-    flex: 0 0 auto;
+    width: fit-content;
     transition: transform var(--dur) var(--ease);
     filter: drop-shadow(0 8px 24px rgba(0, 0, 0, .35));
   }
-  .hero__badge:hover { transform: translateY(-3px) rotate(-3deg); }
-  .hero__badge :global(img) { width: clamp(84px, 9vw, 132px); height: auto; }
+  .hero__badge:hover { transform: scale(1.05); }
+  .hero__badge :global(img) { width: clamp(63px, 6.75vw, 99px); height: auto; }
 
   /* ---- Dolní blok ---- */
   .hero__bottom { margin-top: auto; }
@@ -228,13 +218,11 @@ const slides = [
 
   @media (max-width: 860px) {
     .hero { min-height: min(760px, 90svh); }
+    .hero__inner { padding-block: var(--sp-8) 40px; }
     .hero__row { flex-direction: column; align-items: stretch; gap: var(--sp-6); }
     .hero__aside { max-width: none; }
     .hero__actions :global(.btn) { flex: 1; justify-content: center; }
-  }
-
-  @media (max-width: 480px) {
-    .hero__badge :global(img) { width: 74px; }
+    .hero__badge, .hero__lead { display: none; }
   }
 
   @media (prefers-reduced-motion: reduce) {

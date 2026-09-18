@@ -32,7 +32,7 @@ const fullImages = await Promise.all(
   <div class="gallery__grid" id="galleryGrid">
     {gallery.map((item, i) => (
       <button
-        class:list={['gallery__cell', item.size && `gallery__cell--${item.size}`]}
+        class:list={['gallery__cell', { 'gallery__cell--portrait': item.image.height > item.image.width }]}
         data-category={item.category}
         data-full={fullImages[i]!.src}
         data-caption={item.caption}
@@ -186,26 +186,36 @@ const fullImages = await Promise.all(
     color: #fff;
   }
 
-  /* ---- Bento grid ---- */
+  /* ---- Mřížka (masonry sloupce) ----
+     CSS Grid se zafixovaným aspect-ratio na jednotlivých dlaždicích
+     nechává mezery, když se v jednom řádku sejde širší a užší dlaždice
+     různé výšky — proto sloupcové rozložení, kde si každý sloupec
+     plyne nezávisle a poměry stran zůstanou přesné. */
   .gallery__grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-auto-rows: 210px;
-    grid-auto-flow: dense;
-    gap: 14px;
+    columns: 3;
+    column-gap: 14px;
   }
 
   .gallery__cell {
+    display: block;
+    width: 100%;
     position: relative;
     border: 0;
     padding: 0;
+    margin-bottom: 14px;
     border-radius: var(--radius-sm);
     overflow: hidden;
     background: var(--blue-soft);
+    aspect-ratio: 3 / 2;
+    break-inside: avoid;
   }
 
-  .gallery__cell--wide { grid-column: span 2; }
-  .gallery__cell--tall { grid-row: span 2; }
+  /* display:block výše by jinak přebilo výchozí chování atributu hidden */
+  .gallery__cell[hidden] {
+    display: none;
+  }
+
+  .gallery__cell--portrait { aspect-ratio: 3 / 4; }
 
   .gallery__cell :global(img) {
     width: 100%;
@@ -300,13 +310,11 @@ const fullImages = await Promise.all(
   .lb__arrow--next { margin-left: var(--sp-4); }
 
   @media (max-width: 900px) {
-    .gallery__grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 180px; }
+    .gallery__grid { columns: 2; }
   }
 
   @media (max-width: 560px) {
-    .gallery__grid { grid-template-columns: 1fr; grid-auto-rows: 230px; }
-    .gallery__cell--wide { grid-column: auto; }
-    .gallery__cell--tall { grid-row: auto; }
+    .gallery__grid { columns: 1; }
     .gallery__cap { opacity: 1; } /* na dotykových zařízeních popisek rovnou */
     .lb { padding: var(--sp-2); }
     .lb__arrow {

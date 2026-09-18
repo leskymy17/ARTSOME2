@@ -5,7 +5,7 @@
 import type { ImageMetadata } from 'astro';
 
 import imgOrigin from '../assets/photo/ARTSOME.jpeg';
-import imgWork from '../assets/photo/po.jpeg';
+import imgWork from '../assets/photo/artsome-vozidla.webp';
 import imgCraft from '../assets/photo/ref-3.jpeg';
 
 export interface AboutStory {
@@ -45,7 +45,7 @@ export const aboutStories: AboutStory[] = [
         'na Firmy.cz a 32 recenzí není náhoda.',
     ],
     image: imgWork,
-    imageAlt: 'Sklep přestavěný na obyvatelnou kancelář — ukázka kompletní realizace',
+    imageAlt: 'Firemní vozidla ARTSOME polepená logem, připravená vyjet na zakázku',
     reverse: true,
   },
   {
