@@ -212,7 +212,7 @@ export const services: Service[] = [
   },
   {
     slug: 'podlahy-a-stavba',
-    title: 'Podlahy & stavba',
+    title: 'Rekonstrukce',
     headline: 'Podlahy a drobné stavební práce',
     cardText: 'Nivelace, plovoucí podlahy, vinyl, PVC, koberce i sádrokartonové stropy.',
     lead:
