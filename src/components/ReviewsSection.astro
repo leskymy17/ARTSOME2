@@ -5,9 +5,12 @@
  * Recenze jedou jako nekonečný pás (marquee) — plynule a pomalu
  * pořád dokola, bez zastavování; pauza jen při najetí myší / fokusu.
  */
+import { Image } from 'astro:assets';
 import { site } from '../data/site';
 import { reviews } from '../data/reviews';
 import starIcon from '../assets/star.svg';
+import firmyBadge from '../assets/firmy-badge.webp';
+import mascotPohoda from '../assets/mascot-pohoda.webp';
 
 interface Props {
   tag?: string;
@@ -40,13 +43,27 @@ const initials = (name: string) => name.trim().charAt(0).toUpperCase();
     <div class="wrap testi-head reveal">
       <span class="testi-kicker">Recenze</span>
       <h2 class="testi-title">Spokojení zákazníci</h2>
-      <p class="testi-rating">
-        <span class="testi-rating__stars" aria-hidden="true">
-          {Array.from({ length: 5 }).map(() => (
-            <img src={starIcon.src} width="16" height="15" alt="" loading="lazy" />
-          ))}
-        </span>
-        <strong>{site.rating.firmy.score}</strong> z 5 · {site.rating.firmy.count} ověřených recenzí na Firmy.cz
+
+      <div class="testi-rating">
+        <Image
+          src={firmyBadge}
+          alt="Firmy.cz — TOP firma 2025"
+          width={280}
+          quality={100}
+          class="testi-rating__badge"
+        />
+        <div class="testi-rating__score">
+          <strong>{site.rating.firmy.score}</strong>
+          <span class="testi-rating__stars" aria-hidden="true">
+            {Array.from({ length: 5 }).map(() => (
+              <img src={starIcon.src} width="22" height="21" alt="" loading="lazy" />
+            ))}
+          </span>
+        </div>
+      </div>
+
+      <p class="testi-rating__count">
+        {site.rating.firmy.count} ověřených recenzí na <strong>Firmy.cz</strong>
       </p>
     </div>
   )}
@@ -80,6 +97,15 @@ const initials = (name: string) => name.trim().charAt(0).toUpperCase();
       Číst všech {site.rating.firmy.count} recenzí na Firmy.cz →
     </a>
   </p>
+
+  <Image
+    src={mascotPohoda}
+    alt=""
+    aria-hidden="true"
+    width={1200}
+    quality={100}
+    class="testi-mascot"
+  />
 </section>
 
 <style>
@@ -92,7 +118,7 @@ const initials = (name: string) => name.trim().charAt(0).toUpperCase();
     display: inline-block;
     font-family: var(--font-head);
     font-size: .8rem;
-    font-weight: 700;
+    font-weight: var(--fw-bold);
     letter-spacing: .12em;
     text-transform: uppercase;
     color: var(--blue);
@@ -100,22 +126,45 @@ const initials = (name: string) => name.trim().charAt(0).toUpperCase();
   }
 
   .testi-title {
-    font-size: clamp(2.4rem, 6vw, 4.4rem);
-    font-weight: 500;
+    font-size: var(--h1);
+    font-weight: var(--fw-bold);
     margin-bottom: var(--sp-4);
   }
 
   .testi-rating {
     display: inline-flex;
     align-items: center;
-    gap: .5rem;
-    color: var(--ink-soft);
-    font-size: .92rem;
+    gap: var(--sp-6);
+    margin-bottom: var(--sp-3);
   }
 
-  .testi-rating strong { color: var(--blue-ink); font-family: var(--font-head); }
+  .testi-rating :global(.testi-rating__badge) { width: 96px; height: auto; flex: 0 0 auto; }
 
-  .testi-rating__stars { display: inline-flex; gap: .2rem; }
+  .testi-rating__score {
+    display: grid;
+    gap: .5rem;
+    justify-items: start;
+  }
+
+  .testi-rating__score strong {
+    font-family: var(--font-head);
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: var(--blue-ink);
+    line-height: 1;
+  }
+
+  .testi-rating__stars { display: inline-flex; gap: .3rem; }
+
+  .testi-rating__count {
+    color: var(--ink-soft);
+    font-size: .95rem;
+  }
+
+  .testi-rating__count strong {
+    color: var(--ink);
+    font-weight: var(--fw-bold);
+  }
 
   /* ---- Nekonečný pás ---- */
   .testi-stage { position: relative; }
@@ -209,7 +258,7 @@ const initials = (name: string) => name.trim().charAt(0).toUpperCase();
     background: var(--blue-soft);
     color: var(--blue);
     font-family: var(--font-head);
-    font-weight: 700;
+    font-weight: var(--fw-bold);
     flex: 0 0 auto;
   }
 
@@ -235,7 +284,21 @@ const initials = (name: string) => name.trim().charAt(0).toUpperCase();
 
   .testi-all a:hover { text-decoration: underline; }
 
+  .testi :global(.testi-mascot) {
+    display: block;
+    width: 600px;
+    max-width: 100%;
+    height: auto;
+    margin-top: var(--sp-8);
+    margin-inline: auto;
+    /* mezera pod obrázkem = poloviční spodní padding sekce */
+    margin-bottom: calc(var(--sp-section) / -2);
+  }
+
   @media (max-width: 640px) {
     .testi-item { flex-basis: 78vw; }
+    .testi-rating { gap: var(--sp-4); }
+    .testi-rating :global(.testi-rating__badge) { width: 72px; }
+    .testi-rating__score strong { font-size: 1.9rem; }
   }
 </style>

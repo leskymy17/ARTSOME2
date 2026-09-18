@@ -12,6 +12,7 @@ import ServiceCard from '../components/ServiceCard.astro';
 import ProcessSteps from '../components/ProcessSteps.astro';
 import BeforeAfterSlider from '../components/BeforeAfterSlider.astro';
 import ReviewsSection from '../components/ReviewsSection.astro';
+import ReferenceCarousel from '../components/ReferenceCarousel.astro';
 import AreaCoverage from '../components/AreaCoverage.astro';
 import FaqAccordion from '../components/FaqAccordion.astro';
 import LeadForm from '../components/LeadForm.astro';
@@ -22,8 +23,21 @@ import { site } from '../data/site';
 import { services } from '../data/services';
 import { gallery, caseStudy } from '../data/gallery';
 import { faq } from '../data/faq';
+import mascotPoptavka from '../assets/mascot-poptavka.webp';
 
-const teaser = gallery.slice(0, 3);
+// "Renovace chaty — detail vchodu" je skoro identický záběr jako
+// "Renovace chaty — Beskydy" (stejná chata, stejný úhel) — v teaseru
+// vedle sebe vypadaly jako duplicita, tak ho vyřazujeme.
+const withoutDuplicate = gallery.filter((item) => item.caption !== 'Renovace chaty — detail vchodu');
+const teaser = [
+  withoutDuplicate[1]!, // Výmalba — akcentní stěna
+  withoutDuplicate[0]!, // Renovace chaty — Beskydy
+  withoutDuplicate[4]!, // Rekonstrukce sklepa — po
+  withoutDuplicate[2]!, // Fototapeta a výmalba
+  withoutDuplicate[3]!, // Výmalba pokoje — modrá stěna
+  withoutDuplicate[5]!, // Rekonstrukce sklepa — před
+  ...withoutDuplicate.slice(6, 10),
+];
 ---
 
 <BaseLayout
@@ -64,31 +78,18 @@ const teaser = gallery.slice(0, 3);
   </section>
 
   <!-- REFERENCE TEASER + PROMĚNA -->
-  <section class="section section--dim" id="reference">
+  <section class="section home-ref" id="reference">
     <div class="wrap">
       <div class="home-ref-head reveal">
-        <SectionHead kicker="Reference" title="Naše práce mluví za nás" class="home-ref-title">
+        <SectionHead kicker="Reference" title="Naše práce mluví za nás" onDark class="home-ref-title">
           Reálné fotky z realizací po celém kraji — žádný stock, jen odvedená práce.
         </SectionHead>
-        <Button href="/reference/" variant="ghost" class="home-ref-btn">
+        <Button href="/reference/" variant="inverse" class="home-ref-btn">
           Všechny reference <Icon name="arrow-right" size={16} />
         </Button>
       </div>
 
-      <div class="home-ref-grid">
-        {teaser.map((item) => (
-          <a href="/reference/" class="home-ref-cell reveal" aria-label={`Reference: ${item.caption}`}>
-            <Image
-              src={item.image}
-              alt={item.alt}
-              width={640}
-              widths={[420, 640]}
-              sizes="(max-width: 700px) 92vw, 380px"
-            />
-            <span class="home-ref-cap">{item.caption}</span>
-          </a>
-        ))}
-      </div>
+      <ReferenceCarousel items={teaser} class="home-ref-carousel reveal" />
 
       <div class="home-case reveal">
         <div class="home-case__text">
@@ -139,6 +140,15 @@ const teaser = gallery.slice(0, 3);
             <Icon name="mail" /> {site.email}
           </a>
         </div>
+
+        <Image
+          src={mascotPoptavka}
+          alt=""
+          aria-hidden="true"
+          width={760}
+          quality={100}
+          class="home-contact__mascot"
+        />
       </div>
       <div class="home-contact__form reveal">
         <LeadForm source="homepage" />
@@ -165,6 +175,8 @@ const teaser = gallery.slice(0, 3);
   .home-svc-note strong { color: var(--blue-ink); }
 
   /* ---- Reference teaser ---- */
+  .home-ref { background: var(--blue-ink); }
+
   .home-ref-head {
     display: flex;
     align-items: flex-end;
@@ -176,45 +188,7 @@ const teaser = gallery.slice(0, 3);
   .home-ref-head :global(.home-ref-title) { margin-bottom: var(--sp-8); }
   :global(.home-ref-btn) { margin-bottom: var(--sp-8); }
 
-  .home-ref-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
-    margin-bottom: var(--sp-16);
-  }
-
-  .home-ref-cell {
-    position: relative;
-    border-radius: var(--radius-sm);
-    overflow: hidden;
-    aspect-ratio: 3 / 2;
-  }
-
-  .home-ref-cell :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform .45s var(--ease);
-  }
-
-  .home-ref-cell:hover :global(img) { transform: scale(1.05); }
-
-  .home-ref-cap {
-    position: absolute;
-    inset: auto 0 0 0;
-    padding: 2rem .9rem .7rem;
-    background: linear-gradient(transparent, rgba(10, 12, 50, .78));
-    color: #fff;
-    font-size: .85rem;
-    font-weight: 600;
-    opacity: 0;
-    transition: opacity var(--dur) var(--ease);
-  }
-
-  .home-ref-cell:hover .home-ref-cap,
-  .home-ref-cell:focus-visible .home-ref-cap {
-    opacity: 1;
-  }
+  :global(.home-ref-carousel) { margin-bottom: var(--sp-16); }
 
   /* ---- Případovka ---- */
   .home-case {
@@ -232,6 +206,7 @@ const teaser = gallery.slice(0, 3);
 
   /* ---- Poptávka ---- */
   .home-contact {
+    position: relative;
     background: linear-gradient(160deg, var(--blue) 55%, var(--blue-deep));
     padding-block: var(--sp-section);
   }
@@ -240,26 +215,52 @@ const teaser = gallery.slice(0, 3);
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--sp-16);
-    align-items: start;
+    /* stretch (ne start): sloupec s textem tak sahá přes celou výšku
+       řádku, i když je vlastní obsah kratší — díky tomu se dá maskot
+       spolehlivě zarovnat k jeho pravému a spodnímu okraji. */
+    align-items: stretch;
+  }
+
+  .home-contact__info { position: relative; }
+
+  /* Maskot zarovnaný k pravému okraji textového sloupce (u paty
+     formuláře) — dole záměrně přesahuje přes patu sekce, aby ho
+     dole "uřízla" navazující patička. */
+  .home-contact__info :global(.home-contact__mascot) {
+    display: block;
+    position: absolute;
+    right: 0;
+    /* -sp-section (spodní odsazení sekce) + kus navíc: teprve tak se
+       spodek maskota dostane za hranu sekce a schová se pod patičku. */
+    bottom: calc(-1 * var(--sp-section) - 8px);
+    width: clamp(219px, 20vw, 352px);
+    height: auto;
+    pointer-events: none;
+    user-select: none;
   }
 
   .home-contact__channels {
     display: grid;
-    gap: var(--sp-3);
-    margin-top: var(--sp-6);
+    gap: var(--sp-4);
+    margin-top: var(--sp-8);
   }
 
   .home-contact__channel {
     display: inline-flex;
     align-items: center;
-    gap: .7rem;
+    gap: .8rem;
+    width: fit-content;
+    background: rgba(14, 18, 82, .35);
+    border-radius: var(--radius-pill);
+    padding: 1rem 1.75rem;
     color: #fff;
     font-family: var(--font-head);
-    font-weight: 700;
+    font-weight: var(--fw-bold);
     font-size: 1.15rem;
+    transition: background var(--dur) var(--ease);
   }
 
-  .home-contact__channel:hover { text-decoration: underline; }
+  .home-contact__channel:hover { background: rgba(14, 18, 82, .5); }
 
   .home-contact__form {
     background: var(--paper);
@@ -273,10 +274,11 @@ const teaser = gallery.slice(0, 3);
     .home-svc-grid { grid-template-columns: repeat(2, 1fr); }
     .home-case { grid-template-columns: 1fr; padding: var(--sp-6); gap: var(--sp-6); }
     .home-contact__grid { grid-template-columns: 1fr; gap: var(--sp-8); }
+    /* Ve sloupci by maskot přesahoval do formuláře pod ním — na mobilu skryjeme. */
+    .home-contact__info :global(.home-contact__mascot) { display: none; }
   }
 
   @media (max-width: 640px) {
     .home-svc-grid { grid-template-columns: 1fr; }
-    .home-ref-grid { grid-template-columns: 1fr; }
   }
 </style>

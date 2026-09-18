@@ -48,7 +48,9 @@ const isActive = (path: string) =>
         <Icon name="phone" size={18} />
         <strong>{site.phone}</strong>
       </a>
-      <Button href="/kontakt/" class="header__cta">Nezávazná poptávka</Button>
+      <Button href="/kontakt/" class="header__cta">
+        Nezávazná poptávka <Icon name="send" size={16} />
+      </Button>
       <button
         class="header__burger"
         id="navToggle"
@@ -91,11 +93,36 @@ const isActive = (path: string) =>
     document.body.classList.toggle('nav-open', !open);
   });
 
-  // Povýšení hlavičky po odscrollování (jemný stín + skrytá linka).
+  // Povýšení hlavičky po odscrollování (jemný stín) + skrytí při scrollu
+  // dolů a plynulý návrat při scrollu nahoru.
   const header = document.querySelector('.header');
-  const onScroll = () => header?.classList.toggle('is-scrolled', window.scrollY > 8);
-  onScroll();
-  window.addEventListener('scroll', onScroll, { passive: true });
+  let lastY = window.scrollY;
+  let ticking = false;
+
+  const updateHeader = () => {
+    const y = window.scrollY;
+    header?.classList.toggle('is-scrolled', y > 8);
+
+    const mobileOpen = document.body.classList.contains('nav-open');
+    if (!mobileOpen) {
+      header?.classList.toggle('is-hidden', y > lastY && y > 120);
+    }
+
+    lastY = y;
+    ticking = false;
+  };
+
+  updateHeader();
+  window.addEventListener(
+    'scroll',
+    () => {
+      if (!ticking) {
+        requestAnimationFrame(updateHeader);
+        ticking = true;
+      }
+    },
+    { passive: true },
+  );
 </script>
 
 <style>
@@ -105,21 +132,30 @@ const isActive = (path: string) =>
     z-index: 100;
     background: var(--paper);
     border-bottom: 1px solid var(--blue-line);
-    transition: box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
+    transition:
+      box-shadow var(--dur) var(--ease),
+      border-color var(--dur) var(--ease),
+      transform var(--dur-slow) var(--ease);
   }
   /* Po odscrollování hlavička jemně „vzlétne“ nad obsah. */
   .header.is-scrolled {
     box-shadow: 0 6px 24px -14px rgba(20, 28, 120, .5);
     border-bottom-color: transparent;
   }
+  /* Scroll dolů ji plynule schová, scroll nahoru zase vrátí. */
+  .header.is-hidden { transform: translateY(-100%); }
 
+  /* 3 sloupce místo flexu se space-between: menu je pak vždy přesně
+     uprostřed lišty, ne jen "v prostoru mezi" logem a akcemi. */
   .header__row {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    justify-content: space-between;
     gap: var(--sp-6);
     height: 76px;
   }
+
+  .header__logo { justify-self: start; }
 
   .header__logo img { height: 56px; width: auto; }
 
@@ -192,7 +228,7 @@ const isActive = (path: string) =>
   }
   .header__sub-link:hover { background: var(--blue-soft); color: var(--blue); }
 
-  .header__actions { display: flex; align-items: center; gap: var(--sp-6); }
+  .header__actions { display: flex; align-items: center; justify-self: end; gap: var(--sp-6); }
 
   .header__phone {
     display: inline-flex;
@@ -239,7 +275,7 @@ const isActive = (path: string) =>
   }
   .header__mobile-group {
     font-size: .78rem;
-    font-weight: 700;
+    font-weight: var(--fw-bold);
     letter-spacing: .1em;
     text-transform: uppercase;
     color: var(--ink-soft);
@@ -252,7 +288,7 @@ const isActive = (path: string) =>
     gap: .5rem;
     margin-top: var(--sp-4);
     color: var(--blue);
-    font-weight: 700;
+    font-weight: var(--fw-bold);
     font-family: var(--font-head);
   }
 

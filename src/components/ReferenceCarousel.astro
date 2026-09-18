@@ -1,0 +1,223 @@
+---
+/**
+ * Karusel referenčních fotek na homepage — 3 velké fotky vedle sebe,
+ * šipky po stranách a tečkový indikátor pod fotkami (stejný vzor
+ * jako u snímků v Hero). Navržený pro tmavé pozadí sekce.
+ */
+import { Image } from 'astro:assets';
+import type { GalleryItem } from '../data/gallery';
+import Icon from './Icon.astro';
+
+interface Props {
+  items: GalleryItem[];
+  href?: string;
+  class?: string;
+}
+
+const { items, href = '/reference/', class: className } = Astro.props;
+---
+
+<div class:list={['refc', className]}>
+  <button class="refc__arrow refc__arrow--prev" data-refc-prev aria-label="Předchozí fotografie">
+    <Icon name="arrow-right" size={20} class="refc__arrow-flip" />
+  </button>
+
+  <ul class="refc__track" data-refc-track aria-label="Reference z realizací">
+    {items.map((item) => (
+      <li class="refc__item">
+        <a href={href} class="refc__link" aria-label={`Reference: ${item.caption}`}>
+          <Image
+            src={item.image}
+            alt={item.alt}
+            width={640}
+            widths={[420, 640]}
+            sizes="(max-width: 700px) 82vw, (max-width: 1000px) 45vw, 380px"
+          />
+          <span class="refc__cap" aria-hidden="true">{item.caption}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+
+  <button class="refc__arrow refc__arrow--next" data-refc-next aria-label="Další fotografie">
+    <Icon name="arrow-right" size={20} />
+  </button>
+
+  {items.length > 1 && (
+    <div class="refc__dots" data-refc-dots>
+      {items.map((item, i) => (
+        <button
+          type="button"
+          class:list={['refc__dot', { 'is-active': i === 0 }]}
+          data-refc-dot
+          aria-label={`Přejít na fotografii: ${item.caption}`}
+          aria-current={i === 0 ? 'true' : undefined}
+        />
+      ))}
+    </div>
+  )}
+</div>
+
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>('.refc')) {
+    const track = root.querySelector<HTMLElement>('[data-refc-track]')!;
+    const prev = root.querySelector<HTMLButtonElement>('[data-refc-prev]')!;
+    const next = root.querySelector<HTMLButtonElement>('[data-refc-next]')!;
+    const dots = [...root.querySelectorAll<HTMLButtonElement>('[data-refc-dot]')];
+
+    const step = () => {
+      const item = track.querySelector<HTMLElement>('.refc__item');
+      if (!item) return 0;
+      const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+      return item.getBoundingClientRect().width + gap;
+    };
+
+    const currentIndex = () => {
+      const s = step();
+      return s ? Math.round(track.scrollLeft / s) : 0;
+    };
+
+    const setActive = (i: number) => {
+      dots.forEach((dot, di) => {
+        dot.classList.toggle('is-active', di === i);
+        if (di === i) dot.setAttribute('aria-current', 'true');
+        else dot.removeAttribute('aria-current');
+      });
+    };
+
+    const goTo = (i: number) => {
+      const clamped = Math.max(0, Math.min(i, dots.length - 1));
+      track.scrollTo({ left: clamped * step(), behavior: 'smooth' });
+    };
+
+    prev.addEventListener('click', () => goTo(currentIndex() - 1));
+    next.addEventListener('click', () => goTo(currentIndex() + 1));
+    dots.forEach((dot, i) => dot.addEventListener('click', () => goTo(i)));
+
+    let ticking = false;
+    track.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            setActive(currentIndex());
+            ticking = false;
+          });
+          ticking = true;
+        }
+      },
+      { passive: true },
+    );
+  }
+</script>
+
+<style>
+  .refc { position: relative; }
+
+  .refc__track {
+    list-style: none;
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    padding: 2px;
+    margin: -2px;
+  }
+
+  .refc__track::-webkit-scrollbar { display: none; }
+
+  .refc__item {
+    flex: 0 0 calc((100% - 2 * 14px) / 3);
+    scroll-snap-align: start;
+  }
+
+  .refc__link {
+    position: relative;
+    display: block;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    aspect-ratio: 3 / 2;
+  }
+
+  .refc__link :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .45s var(--ease);
+  }
+
+  .refc__link:hover :global(img) { transform: scale(1.05); }
+
+  .refc__cap {
+    position: absolute;
+    inset: auto 0 0 0;
+    padding: 2rem .9rem .7rem;
+    background: linear-gradient(transparent, rgba(10, 12, 50, .78));
+    color: #fff;
+    font-size: .85rem;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity var(--dur) var(--ease);
+  }
+
+  .refc__link:hover .refc__cap,
+  .refc__link:focus-visible .refc__cap { opacity: 1; }
+
+  /* ---- Šipky ---- */
+  .refc__arrow {
+    position: absolute;
+    top: 40%;
+    z-index: 2;
+    transform: translateY(-50%);
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .14);
+    border: 1.5px solid rgba(255, 255, 255, .4);
+    color: #fff;
+    backdrop-filter: blur(6px);
+    transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  }
+
+  .refc__arrow:hover { background: rgba(255, 255, 255, .26); border-color: #fff; }
+
+  .refc__arrow--prev { left: 10px; }
+  .refc__arrow--next { right: 10px; }
+
+  .refc__arrow :global(.refc__arrow-flip) { transform: scaleX(-1); }
+
+  /* ---- Tečkový indikátor (stejný vzor jako Hero) ---- */
+  .refc__dots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: var(--sp-6);
+  }
+
+  .refc__dot {
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, .4);
+    cursor: pointer;
+    transition: width var(--dur) var(--ease), background var(--dur) var(--ease);
+  }
+
+  .refc__dot.is-active { width: 26px; background: #fff; }
+
+  @media (max-width: 1000px) {
+    .refc__item { flex-basis: calc((100% - 14px) / 2); }
+  }
+
+  @media (max-width: 640px) {
+    .refc__item { flex-basis: 82vw; }
+    .refc__cap { opacity: 1; }
+    .refc__arrow { width: 40px; height: 40px; }
+  }
+</style>

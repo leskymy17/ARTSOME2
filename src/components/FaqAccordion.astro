@@ -1,10 +1,10 @@
 ---
 /**
- * FAQ akordeon na nativních <details> (přístupný bez JS)
+ * FAQ akordeon — kartičky se zaobleným "+/−" přepínačem,
+ * plynulé rozbalení i zabalení (grid-template-rows trik, žádný JS výpočet výšky).
  * + FAQPage schema pro vyhledávače.
  */
 import type { FaqItem } from '../data/faq';
-import Icon from './Icon.astro';
 
 interface Props {
   items: FaqItem[];
@@ -25,19 +25,45 @@ const schema = {
 };
 ---
 
-<div class="faq">
-  {items.map((item) => (
-    <details class="faq__item reveal">
-      <summary class="faq__q">
-        {item.q}
-        <span class="faq__chevron"><Icon name="chevron-down" size={18} /></span>
-      </summary>
-      <p class="faq__a">{item.a}</p>
-    </details>
+<div class="faq" data-faq>
+  {items.map((item, i) => (
+    <div class="faq__item reveal">
+      <button
+        type="button"
+        class="faq__q"
+        aria-expanded="false"
+        aria-controls={`faq-a-${i}`}
+        id={`faq-q-${i}`}
+      >
+        <span>{item.q}</span>
+        <span class="faq__toggle" aria-hidden="true">
+          <span class="faq__toggle-bar faq__toggle-bar--h"></span>
+          <span class="faq__toggle-bar faq__toggle-bar--v"></span>
+        </span>
+      </button>
+      <div class="faq__panel" id={`faq-a-${i}`} role="region" aria-labelledby={`faq-q-${i}`}>
+        <div class="faq__panel-inner">
+          <p class="faq__a">{item.a}</p>
+        </div>
+      </div>
+    </div>
   ))}
 </div>
 
 {withSchema && <script type="application/ld+json" set:html={JSON.stringify(schema)} is:inline />}
+
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>('[data-faq]')) {
+    for (const btn of root.querySelectorAll<HTMLButtonElement>('.faq__q')) {
+      btn.addEventListener('click', () => {
+        const item = btn.closest<HTMLElement>('.faq__item')!;
+        const open = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', String(!open));
+        item.classList.toggle('is-open', !open);
+      });
+    }
+  }
+</script>
 
 <style>
   .faq {
@@ -48,50 +74,75 @@ const schema = {
   }
 
   .faq__item {
-    background: var(--paper);
-    border: 1px solid var(--blue-line);
-    border-radius: var(--radius-sm);
+    background: var(--paper-dim);
+    border-radius: var(--radius);
     overflow: hidden;
-    transition: border-color .2s;
   }
-
-  .faq__item[open] { border-color: var(--blue); }
 
   .faq__q {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: var(--sp-4);
-    padding: var(--sp-4) var(--sp-6);
+    width: 100%;
+    padding: var(--sp-6);
+    background: none;
+    border: 0;
+    text-align: left;
     font-family: var(--font-head);
-    font-weight: 600;
+    font-weight: var(--fw-bold);
+    font-size: 1.05rem;
     color: var(--blue-ink);
-    cursor: pointer;
-    list-style: none;
   }
 
-  .faq__q::-webkit-details-marker { display: none; }
+  .faq__q:hover { color: var(--blue); }
+  .faq__q:hover .faq__toggle { background: var(--blue-line); }
 
-  .faq__chevron {
+  .faq__toggle {
+    position: relative;
     display: grid;
     place-items: center;
-    color: var(--blue);
-    transition: transform .3s var(--ease);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--blue-soft);
     flex: 0 0 auto;
+    transition: background var(--dur) var(--ease);
   }
 
-  .faq__item[open] .faq__chevron { transform: rotate(180deg); }
+  .faq__toggle-bar {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    background: var(--blue);
+    border-radius: 2px;
+    transition: transform var(--dur) var(--ease);
+  }
+
+  .faq__toggle-bar--h { width: 14px; height: 2px; transform: translate(-50%, -50%); }
+  .faq__toggle-bar--v { width: 2px; height: 14px; transform: translate(-50%, -50%); }
+
+  /* Svislý pruh se schová a z "+" zůstane jen "−". */
+  .faq__item.is-open .faq__toggle-bar--v { transform: translate(-50%, -50%) scaleY(0); }
+
+  /* grid-template-rows 0fr → 1fr: plynulá výška bez JS měření a bez skoku při zavírání. */
+  .faq__panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows var(--dur-slow) var(--ease);
+  }
+
+  .faq__item.is-open .faq__panel { grid-template-rows: 1fr; }
+
+  .faq__panel-inner { overflow: hidden; }
 
   .faq__a {
-    padding: 0 var(--sp-6) var(--sp-4);
+    padding: 0 var(--sp-6) var(--sp-6);
     color: var(--ink-soft);
+    line-height: 1.6;
   }
-  /* Odpověď se při rozbalení jemně odhalí, ne skokem. */
-  .faq__item[open] .faq__a {
-    animation: faq-reveal var(--dur) var(--ease);
-  }
-  @keyframes faq-reveal {
-    from { opacity: 0; transform: translateY(-6px); }
-    to   { opacity: 1; transform: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .faq__panel, .faq__toggle-bar, .faq__toggle { transition: none; }
   }
 </style>

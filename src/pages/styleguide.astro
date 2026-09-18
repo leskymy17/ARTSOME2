@@ -149,7 +149,7 @@ const toc = [
       <SectionHead kicker="Tokeny" title="Typografie" />
 
       <div class="sg-fonts">
-        <div class="sg-font-card" style="font-family: var(--font-head); font-weight: 700;">
+        <div class="sg-font-card" style="font-family: var(--font-head); font-weight: var(--fw-bold);">
           <span class="sg-font-label">--font-head · Poppins</span>
           <span class="sg-font-sample">Aa Bb Cc 0123</span>
         </div>
@@ -162,7 +162,7 @@ const toc = [
       <div class="sg-type-scale">
         {typeScale.map((t) => (
           <div class="sg-type-row">
-            <div class="sg-type-sample" style={`font-size: var(${t.name}); ${t.tag === 'p' ? '' : 'font-family: var(--font-head); font-weight: 700; color: var(--blue-ink);'}`}>
+            <div class="sg-type-sample" style={`font-size: var(${t.name}); ${t.tag === 'p' ? '' : 'font-family: var(--font-head); font-weight: var(--fw-bold); color: var(--blue-ink);'}`}>
               {t.sample}
             </div>
             <div class="sg-type-meta">
@@ -375,7 +375,7 @@ const toc = [
     display: inline-block;
     font-family: var(--font-head);
     font-size: .8rem;
-    font-weight: 700;
+    font-weight: var(--fw-bold);
     letter-spacing: .12em;
     text-transform: uppercase;
     color: var(--blue);
@@ -479,7 +479,7 @@ const toc = [
   .sg-font-label {
     font-family: var(--font-body);
     font-size: .8rem;
-    font-weight: 700;
+    font-weight: var(--fw-bold);
     color: var(--blue);
     text-transform: uppercase;
     letter-spacing: .08em;
