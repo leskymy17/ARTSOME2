@@ -10,17 +10,13 @@ import Icon from './Icon.astro';
 
 interface Props {
   service: Service;
-  /** Pořadové číslo pro štítek 01–04 */
-  index: number;
 }
 
-const { service, index } = Astro.props;
-const num = String(index + 1).padStart(2, '0');
+const { service } = Astro.props;
 ---
 
 <article class="svc reveal">
   <div class="svc__img">
-    <span class="svc__num" aria-hidden="true">{num}</span>
     <Image
       src={service.image}
       alt={service.imageAlt}
@@ -34,7 +30,6 @@ const num = String(index + 1).padStart(2, '0');
     <h3 class="svc__title">
       <a href={`/sluzby/${service.slug}/`} class="svc__link-cover">{service.title}</a>
     </h3>
-    <p class="svc__text">{service.cardText}</p>
     <span class="svc__more">
       Více o službě <Icon name="arrow-right" size={15} />
     </span>
@@ -87,34 +82,17 @@ const num = String(index + 1).padStart(2, '0');
     );
   }
 
-  .svc__num {
-    position: absolute;
-    z-index: 1;
-    top: 12px;
-    left: 12px;
-    width: 30px;
-    height: 30px;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, .92);
-    color: var(--blue);
-    font-family: var(--font-head);
-    font-weight: 800;
-    font-size: .85rem;
-    display: grid;
-    place-items: center;
-  }
-
   .svc__body {
     position: relative;
     margin-top: auto;
     padding: 20px 20px 22px;
     display: flex;
     flex-direction: column;
-    gap: var(--sp-2);
+    gap: var(--sp-3);
   }
 
   .svc__title {
-    font-size: var(--h3);
+    font-size: var(--h2);
     font-weight: 700;
     color: #fff;
   }
@@ -125,8 +103,6 @@ const num = String(index + 1).padStart(2, '0');
     position: absolute;
     inset: 0;
   }
-
-  .svc__text { font-size: .93rem; color: rgba(255, 255, 255, .82); }
 
   .svc__more {
     font-family: var(--font-head);

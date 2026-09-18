@@ -50,7 +50,7 @@
   --shadow-sm:  0 4px 18px -8px rgba(20, 28, 120, .25);
 
   /* ---- Layout & animace ---- */
-  --max:  1200px;
+  --max:  1440px;
   --ease: cubic-bezier(.22, 1, .36, 1);   /* sebevědomý dojezd (ease-out) */
   --dur-fast: 140ms;   /* okamžitá odezva (press, drobný stav) */
   --dur:      240ms;   /* běžná změna stavu */
