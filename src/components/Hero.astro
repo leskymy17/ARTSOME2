@@ -348,7 +348,9 @@ const slides = [
   }
 
   @media (max-width: 560px) {
+    /* Na mobilu se maskot v rohu skrývá (velikost --mascot-k zůstává pro návrat). */
     .hero { --mascot-k: .35; }
+    .hero :global(.hero__mascot) { display: none; }
   }
 
   @media (max-width: 360px) {
