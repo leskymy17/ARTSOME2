@@ -61,7 +61,10 @@ const slides = [
           <Button href={site.phoneHref} variant="inverse">
             <Icon name="phone" /> {site.phone}
           </Button>
-          <Button href="/kontakt/" variant="light">Cenová kalkulace zdarma</Button>
+          <Button href="/kontakt/" variant="light">
+            <span class="hero__lbl-full">Cenová kalkulace zdarma</span>
+            <span class="hero__lbl-short">Poptávka</span>
+          </Button>
         </div>
 
         <div class="hero__aside">
@@ -229,6 +232,9 @@ const slides = [
   }
   .hero__actions :global(.btn svg) { width: 23px; height: 23px; }
 
+  /* Krátký popisek „Poptávka“ jen na mobilu (viz @media níže). */
+  .hero__lbl-short { display: none; }
+
   .hero__aside {
     max-width: 42ch;
     display: grid;
@@ -257,8 +263,23 @@ const slides = [
     .hero__inner { padding-block: var(--sp-8) 40px; }
     .hero__row { flex-direction: column; align-items: stretch; gap: var(--sp-6); }
     .hero__aside { max-width: none; }
-    .hero__actions :global(.btn) { flex: 1; justify-content: center; }
+    /* Obě tlačítka vedle sebe: menší písmo a odsazení, žádné zalamování. */
+    .hero__actions { flex-wrap: nowrap; gap: 10px; }
+    .hero__actions :global(.btn) {
+      flex: 1 1 auto;
+      justify-content: center;
+      min-width: 0;
+      font-size: 1rem;
+      padding: 1rem .9rem;
+    }
+    .hero__actions :global(.btn svg) { width: 18px; height: 18px; }
+    .hero__lbl-full { display: none; }
+    .hero__lbl-short { display: inline; }
     .hero__badge, .hero__lead { display: none; }
+  }
+
+  @media (max-width: 360px) {
+    .hero__actions :global(.btn) { font-size: .9rem; padding-inline: .7rem; }
   }
 
   @media (prefers-reduced-motion: reduce) {

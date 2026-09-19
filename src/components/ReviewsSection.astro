@@ -310,6 +310,8 @@ const initials = (name: string) => name.trim().charAt(0).toUpperCase();
 
   @media (max-width: 640px) {
     .testi-item { flex-basis: 78vw; }
+    /* Na mobilu o ~40 % pomalejší posun: rychlost × 0,6 = doba × 1,667. */
+    .testi-track { animation-duration: calc(var(--testi-duration, 45s) * 1.667); }
     .testi-rating { gap: var(--sp-4); }
     .testi-rating :global(.testi-rating__badge) { width: 72px; }
     .testi-rating__score strong { font-size: 1.9rem; }

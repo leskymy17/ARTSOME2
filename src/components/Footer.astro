@@ -65,7 +65,7 @@ const year = new Date().getFullYear();
       </ul>
     </nav>
 
-    <div>
+    <div class="footer__contact-col">
       <h3 class="footer__head">Kontakt</h3>
       <ul class="footer__list">
         <li><a href={site.phoneHref}>{site.phone}</a></li>
@@ -221,7 +221,10 @@ const year = new Date().getFullYear();
   }
 
   @media (max-width: 560px) {
-    .footer__grid { grid-template-columns: 1fr; }
-    .footer { padding-bottom: calc(var(--sp-8) + 72px); } /* místo pro sticky lištu */
+    /* Dva sloupce: Navigace | Služby, claim nahoře a Kontakt dole přes celou
+       šířku (dlouhý e-mail a adresa se do půl sloupce nevejdou). */
+    .footer__grid { grid-template-columns: 1fr 1fr; gap: var(--sp-8) var(--sp-6); }
+    .footer__contact-col { grid-column: 1 / -1; }
+    /* Dolní padding pro mobilní sticky lištu (skrytá): calc(var(--sp-8) + 72px) */
   }
 </style>

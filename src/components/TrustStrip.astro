@@ -83,5 +83,11 @@ const items = [
       grid-template-columns: 1fr 1fr;
       gap: var(--sp-4);
     }
+
+    /* Menší ikony (−20 %: 62 → 50 px) a texty, ať se popisky nezalamují
+       do 3–4 řádků. */
+    .trust__item { font-size: .8rem; gap: .55rem; }
+    .trust__icon { width: 50px; height: 50px; border-radius: 12px; }
+    .trust__icon :global(svg) { width: 26px; height: 26px; }
   }
 </style>

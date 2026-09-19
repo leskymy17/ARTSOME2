@@ -124,4 +124,21 @@ const { service } = Astro.props;
 
   .svc__more :global(svg) { transition: transform .25s var(--ease); }
   .svc:hover .svc__more :global(svg) { transform: translateX(4px); }
+
+  /* Mobil (karty pod sebou): nízké karty v poměru 3:2, gradient odpovídajícně
+     kratší (px stopy z desktopu by pokryly skoro celou nízkou kartu). */
+  @media (max-width: 640px) {
+    .svc { min-height: 0; aspect-ratio: 3 / 2; }
+
+    .svc__scrim {
+      background: linear-gradient(
+        to top,
+        rgba(14, 18, 82, .95) 0,
+        rgba(14, 18, 82, .95) 24px,
+        rgba(14, 18, 82, .74) 62px,
+        rgba(14, 18, 82, .36) 100px,
+        rgba(14, 18, 82, 0) 140px
+      );
+    }
+  }
 </style>

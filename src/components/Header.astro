@@ -49,7 +49,9 @@ const isActive = (path: string) =>
         <strong>{site.phone}</strong>
       </a>
       <Button href="/kontakt/" class="header__cta">
-        Nezávazná poptávka <Icon name="send" size={16} />
+        <span class="header__cta-full">Nezávazná poptávka</span>
+        <span class="header__cta-short">Poptávka</span>
+        <Icon name="send" size={16} />
       </Button>
       <button
         class="header__burger"
@@ -239,6 +241,9 @@ const isActive = (path: string) =>
   }
   .header__phone:hover { color: var(--blue); }
 
+  /* Krátký popisek tlačítka se ukazuje jen na mobilu (viz @media níže). */
+  .header__cta-short { display: none; }
+
   /* Burger */
   .header__burger {
     display: none;
@@ -295,13 +300,20 @@ const isActive = (path: string) =>
   @media (max-width: 960px) {
     .header__nav, .header__phone { display: none; }
     .header__burger { display: flex; }
-    .header__row { height: 64px; }
-    .header__logo img { height: 40px; }
-    .header__actions { gap: var(--sp-2); }
-    :global(.header__cta) { padding: .65rem 1.1rem; font-size: .9rem; }
-  }
-
-  @media (max-width: 380px) {
-    :global(.header__cta) { display: none; }
+    /* Dva sloupce (logo | akce). Původní 3 sloupce nechávaly logu jen 1fr
+       a stlačily ho; akce jsou teď doprava, hamburger úplně vpravo. */
+    .header__row {
+      grid-template-columns: auto 1fr;
+      height: 64px;
+    }
+    /* Logo ≈ 20 % šířky lišty (poměr 317:151 → výška ≈ 43px při 20vw = 90px). */
+    .header__logo img { width: 20vw; min-width: 84px; height: auto; }
+    .header__actions { gap: var(--sp-2); justify-self: end; }
+    /* Prefix .header__actions zvedá specifičnost nad scoped .btn z Button.astro,
+       jinak by se tyhle přepisy vůbec neuplatnily. */
+    .header__actions :global(.header__cta) { padding: .65rem 1.1rem; font-size: .9rem; }
+    /* Na mobilu jen krátké „Poptávka“ — s větším logem se delší text nevejde. */
+    .header__cta-full { display: none; }
+    .header__cta-short { display: inline; }
   }
 </style>

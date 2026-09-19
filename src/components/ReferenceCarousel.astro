@@ -112,7 +112,10 @@ const { items, href = '/reference/', class: className } = Astro.props;
 </script>
 
 <style>
-  .refc { position: relative; }
+  /* overflow: clip — záporný margin tracku (−2px kvůli focus ringu) jinak
+     přesahuje o 2px za okraj full-bleed kontejneru a na mobilu vyrobí
+     vodorovný scroll stránky. */
+  .refc { position: relative; overflow: clip; }
 
   .refc__track {
     list-style: none;
