@@ -248,7 +248,9 @@ const carouselItems = [
   }
 
   @media (max-width: 900px) {
-    .svc-detail__grid { grid-template-columns: 1fr; gap: var(--sp-8); }
+    /* minmax(0, 1fr) místo 1fr: 1fr má minimum „auto“ a širší obsah (karusel,
+       tlačítka) roztáhl sloupec nad šířku displeje — texty pak přetékaly. */
+    .svc-detail__grid { grid-template-columns: minmax(0, 1fr); gap: var(--sp-8); }
     .svc-detail__aside { position: static; }
     .svc-others__grid { grid-template-columns: 1fr; }
   }

@@ -202,7 +202,14 @@ const { items, href = '/reference/', class: className } = Astro.props;
     margin-top: var(--sp-6);
   }
 
+  /* Šířka aktivní tečky se nepřechází animací (jen se přepne): animace width
+     při současném plynulém scrollu pásu nechávala v mobilním Safari na spodním
+     okraji teček „duchy“ — tenkou bílou čárku po dřívější aktivní tečce.
+     Plynule se mění jen barva (paint, žádný layout). */
+  .refc__dots { transform: translateZ(0); }
+
   .refc__dot {
+    flex: none;
     width: 8px;
     height: 8px;
     padding: 0;
@@ -210,7 +217,7 @@ const { items, href = '/reference/', class: className } = Astro.props;
     border-radius: var(--radius-pill);
     background: rgba(255, 255, 255, .4);
     cursor: pointer;
-    transition: width var(--dur) var(--ease), background var(--dur) var(--ease);
+    transition: background var(--dur) var(--ease);
   }
 
   .refc__dot.is-active { width: 26px; background: #fff; }

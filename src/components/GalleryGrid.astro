@@ -316,13 +316,35 @@ const fullImages = await Promise.all(
   @media (max-width: 560px) {
     .gallery__grid { columns: 1; }
     .gallery__cap { opacity: 1; } /* na dotykových zařízeních popisek rovnou */
-    .lb { padding: var(--sp-2); }
+    .lb { padding: 0; }
+
+    /* Fotka na 90 % šířky displeje (výška podle poměru stran, max 70 % výšky). */
+    .lb__figure { width: 90vw; max-width: 90vw; }
+    .lb__figure img { width: 100%; height: auto; max-height: 70vh; }
+
+    /* Šipky u sebe uprostřed dole, mezera mezi nimi 16 px. */
     .lb__arrow {
       position: fixed;
       bottom: 20px;
       z-index: 1;
+      margin: 0;
     }
-    .lb__arrow--prev { left: 20%; }
-    .lb__arrow--next { right: 20%; }
+    .lb__arrow--prev { left: calc(50% - 60px); right: auto; }
+    .lb__arrow--next { left: calc(50% + 8px); right: auto; }
+
+    /* Zavření: výrazné kolečko stejné velikosti jako šipky. */
+    .lb__close {
+      top: 16px;
+      right: 16px;
+      width: 52px;
+      height: 52px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .18);
+      border: 1px solid rgba(255, 255, 255, .45);
+      opacity: 1;
+      z-index: 1;
+    }
   }
 </style>
