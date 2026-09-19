@@ -70,7 +70,7 @@ const teaser = [
   <!-- JAK TO PROBÍHÁ -->
   <section class="section" id="postup">
     <div class="wrap">
-      <SectionHead kicker="Jak to probíhá" title="Od poptávky po úklid v pěti krocích" center class="reveal">
+      <SectionHead kicker="Jak to probíhá" title="Od poptávky po úklid ve čtyřech krocích" center class="reveal">
         Žádné překvapení — dopředu víte, co se bude dít, kdy a za kolik.
       </SectionHead>
       <ProcessSteps />
@@ -188,7 +188,14 @@ const teaser = [
   .home-ref-head :global(.home-ref-title) { margin-bottom: var(--sp-8); }
   :global(.home-ref-btn) { margin-bottom: var(--sp-8); }
 
-  :global(.home-ref-carousel) { margin-bottom: var(--sp-16); }
+  /* Full-bleed: fotky sahají až k okraji okna, i když komponenta sedí
+     uvnitř .wrap (funguje, protože .wrap je v prohlížeči vycentrovaný). */
+  :global(.home-ref-carousel) {
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    margin-bottom: var(--sp-16);
+  }
 
   /* ---- Případovka ---- */
   .home-case {

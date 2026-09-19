@@ -1,8 +1,8 @@
 ---
 /**
  * Kroky „Jak to probíhá“ — kartičky s outline ikonou.
- * Vždy 3 karty vedle sebe (na homepage doplní druhý řádek).
- * Varianta `compact` (3 kroky) pro stránky služeb.
+ * Homepage: 4 kroky vedle sebe v jednom řádku.
+ * Varianta `compact` (3 kroky, širší karty) pro stránky služeb.
  */
 import { processSteps } from '../data/process';
 import Icon from './Icon.astro';
@@ -38,15 +38,22 @@ const steps = compact ? processSteps.filter((s) => s.short) : processSteps;
   }
 
   .steps__item {
-    flex: 0 1 360px;
-    max-width: 400px;
+    /* Basis počítaný tak, aby se na homepage (4 karty) vešly do jednoho
+       řádku i s pevnou 24px mezerou: 4 karty + 3 mezery ≈ šířka .wrap. */
+    flex: 0 1 290px;
+    max-width: 320px;
     background: var(--paper-dim);
     border-radius: var(--radius);
     padding: var(--sp-6);
   }
 
-  /* Na stránkách služeb bílé karty (homepage zůstává na jemně šedé). */
-  .steps--compact .steps__item { background: var(--paper); }
+  /* Stránky služeb: jen 3 karty, můžou být širší + bílé pozadí
+     (homepage zůstává na jemně šedé). */
+  .steps--compact .steps__item {
+    flex-basis: 360px;
+    max-width: 400px;
+    background: var(--paper);
+  }
 
   .steps__icon {
     display: grid;

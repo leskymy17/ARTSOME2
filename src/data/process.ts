@@ -29,14 +29,11 @@ export const processSteps: ProcessStep[] = [
     short: true,
   },
   {
-    title: 'Realizace',
-    text: 'Domluvíme termín a pustíme se do práce. Nábytek a podlahy pečlivě zakryjeme.',
+    title: 'Realizace a předání',
+    text:
+      'Domluvíme termín, nábytek a podlahy pečlivě zakryjeme. ' +
+      'Po práci uklidíme a předáme vám hotový prostor.',
     icon: 'hammer',
-  },
-  {
-    title: 'Úklid a předání',
-    text: 'Po práci uklidíme. Předáme vám hotový, čistý prostor — a vy jen zkontrolujete výsledek.',
-    icon: 'broom',
     short: true,
   },
 ];
