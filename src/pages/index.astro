@@ -24,6 +24,7 @@ import { services } from '../data/services';
 import { gallery, caseStudy } from '../data/gallery';
 import { faq } from '../data/faq';
 import mascotPoptavka from '../assets/mascot-poptavka.webp';
+import artsomeAuto from '../assets/artsome-auto.webp';
 
 // "Renovace chaty — detail vchodu" je skoro identický záběr jako
 // "Renovace chaty — Beskydy" (stejná chata, stejný úhel) — v teaseru
@@ -91,6 +92,9 @@ const teaser = [
 
       <ReferenceCarousel items={teaser} class="home-ref-carousel reveal" />
 
+      {/* PROMĚNA PŘED/PO — dočasně skryto. Pro návrat odstraň tento komentář;
+          komponenta BeforeAfterSlider, data (caseStudy) i styly .home-case zůstávají.
+
       <div class="home-case reveal">
         <div class="home-case__text">
           <SectionHead kicker={caseStudy.kicker} title={caseStudy.title}>
@@ -106,11 +110,16 @@ const teaser = [
           class="home-case__slider"
         />
       </div>
+      */}
     </div>
   </section>
 
   <ReviewsSection />
-  <AreaCoverage />
+  <AreaCoverage
+    image={artsomeAuto}
+    imageAlt="Firemní vozidla ARTSOME s logem firmy zaparkovaná před domem"
+    background="#fbfbfb"
+  />
 
   <!-- FAQ -->
   <section class="section" id="faq">

@@ -31,7 +31,7 @@ const { service } = Astro.props;
       <a href={`/sluzby/${service.slug}/`} class="svc__link-cover">{service.title}</a>
     </h3>
     <span class="svc__more">
-      Více o službě <Icon name="arrow-right" size={22} />
+      Více o službě <Icon name="arrow-right" size={18} />
     </span>
   </div>
 </article>
@@ -43,7 +43,7 @@ const { service } = Astro.props;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    min-height: 372px;
+    min-height: 396px;
     isolation: isolate;
     transition:
       transform .35s var(--ease),
@@ -55,10 +55,17 @@ const { service } = Astro.props;
     box-shadow: var(--shadow);
   }
 
+  /* Oříznutí zaoblení přímo na obalu fotky, který se škáluje při hoveru.
+     Samotné overflow: hidden na .svc občas při současné transformaci karty
+     (translateY, reveal) a fotky (scale) v prohlížeči povolí a rohy se na chvíli ukážou hranaté.
+     clip-path je na .svc__img, ne na .svc, aby neřezal box-shadow karty. */
   .svc__img {
     position: absolute;
     inset: 0;
     z-index: -1;
+    border-radius: inherit;
+    overflow: hidden;
+    clip-path: inset(0 round var(--radius));
   }
 
   .svc__img :global(img) {
@@ -75,15 +82,16 @@ const { service } = Astro.props;
     inset: 0;
     background: linear-gradient(
       to top,
-      var(--blue-ink) 0%,
-      rgba(14, 18, 82, .88) 22%,
-      rgba(14, 18, 82, .45) 48%,
-      rgba(14, 18, 82, 0) 75%
+      rgba(14, 18, 82, .95) 0,
+      rgba(14, 18, 82, .95) 32px,
+      rgba(14, 18, 82, .74) 87px,
+      rgba(14, 18, 82, .36) 135px,
+      rgba(14, 18, 82, 0) 183px
     );
   }
 
+  /* Bez position: relative — ::after odkazu se má roztáhnout přes celou kartu (.svc), ne jen přes tělo. */
   .svc__body {
-    position: relative;
     margin-top: auto;
     padding: 20px 20px 22px;
     display: flex;

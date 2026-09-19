@@ -1,7 +1,7 @@
 ---
 /**
  * Sekce recenzí. Bez `tag` zobrazí všechny (homepage),
- * s `tag` jen recenze k dané službě + doplní obecné do minima 3.
+ * s `tag` recenze k dané službě napřed + doplní ostatní do minima 12.
  * Recenze jedou jako nekonečný pás (marquee) — plynule a pomalu
  * pořád dokola, bez zastavování; pauza jen při najetí myší / fokusu.
  */
@@ -20,20 +20,30 @@ interface Props {
 
 const { tag, bare = false } = Astro.props;
 
+// Minimum různých recenzí v pásu — bez opakování ve stejném záběru.
+const MIN_ITEMS = 12;
+
 let items = tag ? reviews.filter((r) => r.tags?.includes(tag)) : reviews;
-if (tag && items.length < 3) {
+if (tag && items.length < MIN_ITEMS) {
+  // Recenze ke službě jdou první, zbytek doplní ostatní (Firmy.cz) do minima.
   const rest = reviews.filter((r) => !items.includes(r));
-  items = [...items, ...rest.slice(0, 3 - items.length)];
+  items = [...items, ...rest.slice(0, MIN_ITEMS - items.length)];
 }
 
-// Pás se skládá ze dvou stejných kopií za sebou — animace posune track
+// Pás se skládá ze dvou stejných půlek za sebou — animace posune track
 // přesně o polovinu jeho šířky, takže návrat na 0 % je vizuálně nerozeznatelný
 // a smyčka je nekonečná a plynulá.
-const track = [...items, ...items];
+// Půlka musí být vždy širší než okno prohlížeče, jinak by se vpravo objevila
+// prázdná plocha (na stránkách služeb jsou jen 3 recenze). Proto se recenze
+// v půlce opakují, dokud jich není aspoň MIN_ITEMS (12 karet ≈ 3800+ px,
+// tedy i na 4K monitoru).
+const repeats = Math.max(1, Math.ceil(MIN_ITEMS / items.length));
+const half = Array.from({ length: repeats }, () => items).flat();
+const track = [...half, ...half];
 
-// Rychlost úměrná počtu recenzí, ať je tempo vždy stejně "pomalinku"
-// bez ohledu na to, kolik jich zrovna je (homepage vs. stránka služby).
-const duration = Math.max(items.length * 7, 28);
+// Rychlost úměrná počtu karet v půlce, ať je tempo vždy stejně "pomalinku"
+// bez ohledu na to, kolik je recenzí (homepage vs. stránka služby).
+const duration = Math.max(half.length * 7, 28);
 
 const initials = (name: string) => name.trim().charAt(0).toUpperCase();
 ---
@@ -197,6 +207,9 @@ const initials = (name: string) => name.trim().charAt(0).toUpperCase();
     gap: 20px;
     width: max-content;
     padding-block: 4px;
+    /* Mezera i za poslední kartou — půlka tracku pak měří přesně n × (karta + mezera)
+       a smyčka na konci nemá 10px skok. */
+    padding-right: 20px;
     animation: testi-scroll var(--testi-duration, 45s) linear infinite;
   }
 

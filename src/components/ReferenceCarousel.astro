@@ -1,7 +1,7 @@
 ---
 /**
- * Karusel referenčních fotek na homepage — 3 velké fotky vedle sebe,
- * šipky po stranách a tečkový indikátor pod fotkami (stejný vzor
+ * Karusel referenčních fotek na homepage — 3,5 fotky vedle sebe (čtvrtá
+ * nakukuje zprava a naznačuje, že se dá posouvat), šipky po stranách a tečkový indikátor pod fotkami (stejný vzor
  * jako u snímků v Hero). Navržený pro tmavé pozadí sekce.
  */
 import { Image } from 'astro:assets';
@@ -31,7 +31,7 @@ const { items, href = '/reference/', class: className } = Astro.props;
             alt={item.alt}
             width={640}
             widths={[420, 640]}
-            sizes="(max-width: 700px) 82vw, (max-width: 1000px) 45vw, 380px"
+            sizes="(max-width: 700px) 82vw, (max-width: 1000px) 45vw, 29vw"
           />
           <span class="refc__cap" aria-hidden="true">{item.caption}</span>
         </a>
@@ -128,7 +128,8 @@ const { items, href = '/reference/', class: className } = Astro.props;
   .refc__track::-webkit-scrollbar { display: none; }
 
   .refc__item {
-    flex: 0 0 calc((100% - 2 * 14px) / 3);
+    /* 3,5 fotky v záběru: 3 celé + půlka čtvrté, mezery 3 × 14px. */
+    flex: 0 0 calc((100% - 3 * 14px) / 3.5);
     scroll-snap-align: start;
   }
 

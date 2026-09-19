@@ -42,7 +42,7 @@ export const aboutStories: AboutStory[] = [
         'subdodavateli a bez koordinace tří různých firem. Domluvíme termín, ' +
         'nábytek i podlahy pečlivě zakryjeme a po práci prostor uklidíme.',
       'Proto se k nám zákazníci vracejí a doporučují nás dál — hodnocení 5,0 ' +
-        'na Firmy.cz a 32 recenzí není náhoda.',
+        'na Firmy.cz a 33 recenzí není náhoda.',
     ],
     image: imgWork,
     imageAlt: 'Firemní vozidla ARTSOME polepená logem, připravená vyjet na zakázku',

@@ -75,4 +75,77 @@ export const reviews: Review[] = [
     date: 'červen 2025',
     tags: ['renovace', 'podlahy-a-stavba'],
   },
+  {
+    text: 'Doporučuji, vše proběhlo perfektně.',
+    name: 'Radim Strakoš',
+    source: 'Firmy.cz',
+    date: 'červen 2025',
+  },
+  {
+    text:
+      'Byl jsem maximálně spokojen, majitel velmi příjemný, zaměřil, spočítal a malovalo se. ' +
+      'Žádné platby předem. Mohu jen doporučit.',
+    name: 'Jan Veselý',
+    source: 'Firmy.cz',
+    date: 'únor 2025',
+    tags: ['malovani'],
+  },
+  {
+    text: 'Spolehliví, rychlí, vstřícní, pěkná práce. Doporučuji.',
+    name: 'Lenka Sobkova',
+    source: 'Firmy.cz',
+    date: 'červen 2025',
+  },
+  {
+    text:
+      'Jsme spokojeni s rychlým provedením malířských a natěračských prací v našem domě. ' +
+      'Spolehlivé jednání.',
+    name: 'R R',
+    source: 'Firmy.cz',
+    date: 'duben 2025',
+    tags: ['malovani', 'natery'],
+  },
+  {
+    text:
+      'Velmi příjemná a vstřícná komunikace, rychlá domluva ohledně termínu, kvalitně odvedená ' +
+      'práce za rozumnou cenu. Děkuji rovněž za čistotu po malování a lidský přístup. ' +
+      'Rozhodně mohu doporučit.',
+    name: 'Jana Kopřivová',
+    source: 'Firmy.cz',
+    date: 'únor 2025',
+    tags: ['malovani'],
+  },
+  {
+    text: 'Profesionální práce, ochota, spolehlivost určitě doporučuji!',
+    name: 'Věra Lešinská',
+    source: 'Firmy.cz',
+    date: 'listopad 2024',
+  },
+  {
+    text:
+      'Skvělá domluva, profesionálně odvedená práce. Výmalba jednoho pokoje, za dva týdny ' +
+      'druhého, skvělá komunikace. Není nic, co by se dalo vytknout. Po odchodu pana malíře ' +
+      'čisto. Mohu všem jen doporučit.',
+    name: 'Eva Brzoskova',
+    source: 'Firmy.cz',
+    date: 'březen 2024',
+    tags: ['malovani'],
+  },
+  {
+    text:
+      'Profesionální přístup, ochota a vstřícnost. Cena vlídná – s ohledem na stav malovaných ' +
+      'místností. Lze pouze doporučit, není co vytknout.',
+    name: 'D Skoczova',
+    source: 'Firmy.cz',
+    date: 'duben 2024',
+    tags: ['malovani'],
+  },
+  {
+    text:
+      'Bezproblémová komunikace, co je dohodnuto, to platí. Čisto při práci, čisto po práci, ' +
+      'rychlost, kvalita. Spokojený zákazník.',
+    name: 'Kamil Übelauer',
+    source: 'Firmy.cz',
+    date: 'duben 2024',
+  },
 ];

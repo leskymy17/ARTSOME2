@@ -5,10 +5,10 @@
  */
 import type { ImageMetadata } from 'astro';
 
-import imgMalovani from '../assets/photo/1.jpg';
-import imgNatery from '../assets/photo/2.png';
-import imgRenovace from '../assets/photo/3.png';
-import imgPodlahy from '../assets/photo/4.png';
+import imgMalovani from '../assets/photo/malovani-artsome.webp';
+import imgNatery from '../assets/photo/natirani2-artsome.webp';
+import imgRenovace from '../assets/photo/renovace-artsome.webp';
+import imgPodlahy from '../assets/photo/rekonstrukce-artsome.webp';
 
 export interface ServiceFaq {
   q: string;

@@ -30,7 +30,7 @@ export const site = {
   ],
 
   rating: {
-    firmy: { score: '5,0', scoreNum: 5.0, count: 32, url: 'https://www.firmy.cz/detail/13603911-artsome-s-r-o-havirov-mesto.html#hodnoceni' },
+    firmy: { score: '5,0', scoreNum: 5.0, count: 33, url: 'https://www.firmy.cz/detail/13603911-artsome-s-r-o-havirov-mesto.html#hodnoceni' },
     nejremeslnici: { score: '4,83', scoreNum: 4.83, count: 8, url: 'https://www.nejremeslnici.cz/profil/461519-artsome-s-r-o' },
   },
 
