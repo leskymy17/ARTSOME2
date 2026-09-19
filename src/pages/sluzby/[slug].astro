@@ -6,6 +6,7 @@
 import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
+import mascotMalir from '../../assets/artsome-maskot-malir.webp';
 import SectionHead from '../../components/SectionHead.astro';
 import ProcessSteps from '../../components/ProcessSteps.astro';
 import RefCarousel from '../../components/RefCarousel.astro';
@@ -43,7 +44,11 @@ const carouselItems = [
   title={`${service.headline} | ARTSOME — Moravskoslezský kraj`}
   description={service.metaDescription}
 >
-  <PageHero title={service.headline} crumbs={[{ label: 'Služby' }, { label: service.title }]}>
+  <PageHero
+    title={service.headline}
+    crumbs={[{ label: 'Služby' }, { label: service.title }]}
+    mascot={mascotMalir}
+  >
     {service.lead}
   </PageHero>
 

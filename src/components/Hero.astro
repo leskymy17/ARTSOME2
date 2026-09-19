@@ -11,14 +11,15 @@ import Button from './Button.astro';
 import RatingStars from './RatingStars.astro';
 
 import badge from '../assets/firmy-badge.webp';
+import mascotEdge from '../assets/artsome-maskot-okraj.webp';
 import bg1 from '../assets/photo/chata-hero.webp';
-import bg2 from '../assets/photo/po.jpeg';
+import bg2 from '../assets/photo/artsome-hala-rekonstrukce.webp';
 import bg3 from '../assets/photo/natery/natery-15.webp';
 import bg4 from '../assets/photo/hero-artsome.webp';
 
 const slides = [
   { img: bg1, alt: 'Dřevěná chata po kompletní renovaci nátěru' },
-  { img: bg2, alt: 'Prostor po kompletní rekonstrukci a výmalbě' },
+  { img: bg2, alt: 'Hala po kompletní rekonstrukci' },
   { img: bg3, alt: 'Hotový nátěr plechové střechy' },
   { img: bg4, alt: 'Firemní vozidla ARTSOME polepená logem' },
 ];
@@ -49,6 +50,19 @@ const slides = [
       ))}
     </div>
   )}
+
+  <!-- Maskot vykukující z pravého spodního rohu; výška = 65 % výšky hero, takže se
+       s hero sekcí (a tím se zařízením) zmenšuje. Pod obsahem (text ho překrývá). -->
+  <Image
+    src={mascotEdge}
+    alt=""
+    aria-hidden="true"
+    width={636}
+    widths={[318, 636]}
+    quality={95}
+    loading="eager"
+    class="hero__mascot"
+  />
 
   <div class="wrap hero__inner">
     <div class="hero__bottom">
@@ -116,7 +130,12 @@ const slides = [
   .hero {
     position: relative;
     display: flex;
-    min-height: min(920px, 88svh);
+    --hero-h: min(920px, 88svh);
+    /* výška maskota jako podíl výšky hero (desktop 65 %, menší na tablet/mobil) */
+    --mascot-k: .65;
+    /* šířka maskota = výška × poměr stran obrázku (636 : 1200) */
+    --mascot-w: calc(var(--hero-h) * var(--mascot-k) * .53);
+    min-height: var(--hero-h);
     color: #fff;
     overflow: hidden;
     background: var(--blue-ink);
@@ -175,6 +194,40 @@ const slides = [
   .hero__dot.is-active {
     width: 26px;
     background: #fff;
+  }
+
+  /* ---- Maskot v pravém spodním rohu ---- */
+  .hero :global(.hero__mascot) {
+    position: absolute;
+    /* Mírný přesah za okraj hero (overflow: hidden ho ořízne): při naklánění
+       by se jinak u pravého a spodního okraje objevila škvíra s pozadím. */
+    right: calc(var(--hero-h) * var(--mascot-k) * -.02);
+    bottom: calc(var(--hero-h) * var(--mascot-k) * -.015);
+    z-index: 1;
+    height: calc(var(--mascot-k) * 100%);
+    width: auto;
+    pointer-events: none;
+    user-select: none;
+    /* Naklánění kolem bodu v ~60 % výšky: horní část (hlava, ruka s štětcem) se
+       kývá, ale nevyjede z rámu tak daleko jako při otáčení kolem paty. */
+    transform-origin: 50% 60%;
+    animation: hero-mascot-wave 4s ease-in-out infinite;
+    will-change: transform;
+  }
+
+  /* Cyklus 4 s, decentní: doleva (−1,5°), přes střed doprava (+1,5°), zpět
+     a pauza (~2,5 s do dalšího zakývání). ease-in-out mezi každými dvěma
+     klíči = plynulé, bez trhání. */
+  @keyframes hero-mascot-wave {
+    0%    { transform: rotate(0deg); }
+    10%   { transform: rotate(-1.5deg); }
+    22.5% { transform: rotate(1.5deg); }
+    35%   { transform: rotate(0deg); }
+    100%  { transform: rotate(0deg); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero :global(.hero__mascot) { animation: none; }
   }
 
   /* ---- Obsah ---- */
@@ -241,6 +294,18 @@ const slides = [
     gap: var(--sp-3);
   }
 
+  /* Desktop: pravý blok (hodnocení + perex) uhne maskotovi z rohu. Odsazení =
+     šířka maskota − vzdálenost obsahu od okraje okna + 16 px rezerva; řádek se
+     nezalamuje, blok se raději zúží (perex se zalomí do víc řádků). */
+  @media (min-width: 861px) {
+    .hero__row { flex-wrap: nowrap; }
+    .hero__aside {
+      flex: 0 1 42ch;
+      min-width: 220px;
+      margin-right: max(0px, calc(var(--mascot-w) - max(0px, (100vw - var(--max)) / 2) - 24px + 16px));
+    }
+  }
+
   .hero__rating {
     display: inline-flex;
     align-items: center;
@@ -276,6 +341,14 @@ const slides = [
     .hero__lbl-full { display: none; }
     .hero__lbl-short { display: inline; }
     .hero__badge, .hero__lead { display: none; }
+
+    /* Tablet a mobil: obsah zabírá celou šířku, maskot proto menší (38 % výšky
+       místo 65 %), ať nezakrývá nadpis a tlačítka. */
+    .hero { --mascot-k: .38; }
+  }
+
+  @media (max-width: 560px) {
+    .hero { --mascot-k: .28; }
   }
 
   @media (max-width: 360px) {

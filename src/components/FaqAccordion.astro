@@ -142,6 +142,12 @@ const schema = {
     line-height: 1.6;
   }
 
+  /* Mobil: o 20 % nižší karty — svislé odsazení 24 → 19,2 px (vodorovné beze změny). */
+  @media (max-width: 640px) {
+    .faq__q { padding-block: calc(var(--sp-6) * .8); }
+    .faq__a { padding-bottom: calc(var(--sp-6) * .8); }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .faq__panel, .faq__toggle-bar, .faq__toggle { transition: none; }
   }

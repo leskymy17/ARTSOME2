@@ -25,6 +25,7 @@ import { gallery, caseStudy } from '../data/gallery';
 import { faq } from '../data/faq';
 import mascotPoptavka from '../assets/mascot-poptavka.webp';
 import artsomeAuto from '../assets/artsome-auto.webp';
+import refBackground from '../assets/artsome-background.webp';
 
 // "Renovace chaty — detail vchodu" je skoro identický záběr jako
 // "Renovace chaty — Beskydy" (stejná chata, stejný úhel) — v teaseru
@@ -79,7 +80,7 @@ const teaser = [
   </section>
 
   <!-- REFERENCE TEASER + PROMĚNA -->
-  <section class="section home-ref" id="reference">
+  <section class="section home-ref" id="reference" style={`--ref-bg: url("${refBackground.src}")`}>
     <div class="wrap">
       <div class="home-ref-head reveal">
         <SectionHead kicker="Reference" title="Naše práce mluví za nás" onDark class="home-ref-title">
@@ -141,15 +142,6 @@ const teaser = [
           Napište nebo zavolejte — ozveme se obvykle do 24 hodin
           a vypracujeme nezávaznou cenovou nabídku.
         </SectionHead>
-        <div class="home-contact__channels">
-          <a href={site.phoneHref} class="home-contact__channel">
-            <Icon name="phone" /> {site.phone}
-          </a>
-          <a href={`mailto:${site.email}`} class="home-contact__channel">
-            <Icon name="mail" /> {site.email}
-          </a>
-        </div>
-
         <Image
           src={mascotPoptavka}
           alt=""
@@ -184,7 +176,11 @@ const teaser = [
   .home-svc-note strong { color: var(--blue-ink); }
 
   /* ---- Reference teaser ---- */
-  .home-ref { background: var(--blue-ink); }
+  /* Fotka (tmavě modrá strukturovaná stěna) místo jednobarevného pozadí;
+     původní barva zůstává jako záloha, než se obrázek načte. */
+  .home-ref {
+    background: var(--blue-ink) var(--ref-bg) center / cover no-repeat;
+  }
 
   .home-ref-head {
     display: flex;
@@ -225,64 +221,51 @@ const teaser = [
     position: relative;
     background: linear-gradient(160deg, var(--blue) 55%, var(--blue-deep));
     padding-block: var(--sp-section);
+    /* Maskot dole přesahuje přes patu sekce — clip ho na hraně sekce uřízne. */
+    overflow: clip;
   }
 
   .home-contact__grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--sp-16);
-    /* stretch (ne start): sloupec s textem tak sahá přes celou výšku
-       řádku, i když je vlastní obsah kratší — díky tomu se dá maskot
-       spolehlivě zarovnat k jeho pravému a spodnímu okraji. */
-    align-items: stretch;
+    /* start: sloupec s textem (a maskotem pod ním) je vyšší než formulář,
+       formulář se proto nemá natahovat na jeho výšku. */
+    align-items: start;
   }
 
-  .home-contact__info { position: relative; }
+  /* Sloupec s textem sahá přes celou výšku řádku (i když je formulář vyšší) —
+     maskot s margin-top: auto tak vždy sedí u spodní hrany řádku. */
+  .home-contact__info {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+  }
 
-  /* Maskot zarovnaný k pravému okraji textového sloupce (u paty
-     formuláře) — dole záměrně přesahuje přes patu sekce, aby ho
-     dole "uřízla" navazující patička. */
+  /* Maskot uprostřed pod celým textovým blokem (nadpis, perex, kontakty).
+     Dole záměrně přesahuje přes patu sekce o 8 px: záporný spodní margin
+     = spodní odsazení sekce + 8 px, overflow: clip na sekci ho tam uřízne.
+     Velikost +15 % oproti původním clamp(219px, 20vw, 352px). */
   .home-contact__info :global(.home-contact__mascot) {
     display: block;
-    position: absolute;
-    right: 0;
-    /* -sp-section (spodní odsazení sekce) + kus navíc: teprve tak se
-       spodek maskota dostane za hranu sekce a schová se pod patičku. */
-    bottom: calc(-1 * var(--sp-section) - 8px);
-    width: clamp(219px, 20vw, 352px);
+    margin: auto auto calc(-1 * var(--sp-section) - 8px);
+    width: clamp(252px, 23vw, 405px);
     height: auto;
     pointer-events: none;
     user-select: none;
   }
-
-  .home-contact__channels {
-    display: grid;
-    gap: var(--sp-4);
-    margin-top: var(--sp-8);
-  }
-
-  .home-contact__channel {
-    display: inline-flex;
-    align-items: center;
-    gap: .8rem;
-    width: fit-content;
-    background: rgba(14, 18, 82, .35);
-    border-radius: var(--radius-pill);
-    padding: 1rem 1.75rem;
-    color: #fff;
-    font-family: var(--font-head);
-    font-weight: var(--fw-bold);
-    font-size: 1.15rem;
-    transition: background var(--dur) var(--ease);
-  }
-
-  .home-contact__channel:hover { background: rgba(14, 18, 82, .5); }
 
   .home-contact__form {
     background: var(--paper);
     border-radius: var(--radius);
     padding: var(--sp-8);
     box-shadow: var(--shadow);
+  }
+
+  /* Mobil: užší boční odsazení uvnitř boxu formuláře (32 → 20 px). */
+  @media (max-width: 640px) {
+    .home-contact__form { padding-inline: 20px; }
   }
 
   /* ---- Responzivita ---- */

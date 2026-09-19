@@ -304,10 +304,15 @@ const isActive = (path: string) =>
        a stlačily ho; akce jsou teď doprava, hamburger úplně vpravo. */
     .header__row {
       grid-template-columns: auto 1fr;
+      /* Řádek pevně = výška lišty: i kdyby logo přesáhlo, neroztáhne řádek
+         a tlačítko/hamburger zůstanou vertikálně na středu. */
+      grid-template-rows: 100%;
       height: 64px;
     }
-    /* Logo ≈ 20 % šířky lišty (poměr 317:151 → výška ≈ 43px při 20vw = 90px). */
-    .header__logo img { width: 20vw; min-width: 84px; height: auto; }
+    /* Výška loga je pevně omezená (max 48 px v liště vysoké 64 px), takže nikdy
+       nepřesáhne bílý podklad. Na telefonech ≈ 20 % šířky lišty (poměr 317:151),
+       na tabletu a širokých displejích se zastaví na 48 px. */
+    .header__logo img { width: auto; height: clamp(40px, 10.5vw, 48px); max-height: 100%; }
     .header__actions { gap: var(--sp-2); justify-self: end; }
     /* Prefix .header__actions zvedá specifičnost nad scoped .btn z Button.astro,
        jinak by se tyhle přepisy vůbec neuplatnily. */

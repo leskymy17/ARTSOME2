@@ -22,8 +22,7 @@ const mapQuery = encodeURIComponent(
 >
   <PageHero title="Pojďme se domluvit" crumbs={[{ label: 'Kontakt' }]}>
     Zavolejte nebo napište. Domluvíme si nezávaznou schůzku a vypracujeme cenovou
-    kalkulaci zdarma — obvykle se ozveme do 24 hodin. Působíme po celém
-    Moravskoslezském kraji.
+    kalkulaci zdarma.
   </PageHero>
 
   <section class="section contact">
@@ -147,6 +146,7 @@ const mapQuery = encodeURIComponent(
   .contact-map { padding-top: 0; }
 
   .contact-map__frame {
+    position: relative;
     border-radius: var(--radius);
     overflow: hidden;
     border: 1px solid var(--blue-line);
@@ -163,6 +163,11 @@ const mapQuery = encodeURIComponent(
   @media (max-width: 900px) {
     .contact__grid { grid-template-columns: 1fr; gap: var(--sp-8); }
     .contact-map__frame iframe { height: 320px; }
+  }
+
+  /* Mobil: užší boční odsazení uvnitř boxu formuláře (32 → 20 px). */
+  @media (max-width: 640px) {
+    .contact__form { padding-inline: 20px; }
   }
 
   /* Mobil: mapa od kraje ke kraji displeje (-24px = boční padding .wrap),
