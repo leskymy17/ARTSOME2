@@ -45,6 +45,11 @@ const track = [...half, ...half];
 // bez ohledu na to, kolik je recenzí (homepage vs. stránka služby).
 const duration = Math.max(half.length * 7, 28);
 
+// Na mobilu o ~40 % pomalejší posun (rychlost × 0,6 = doba ÷ 0,6). Předpočítané
+// tady, ne přes calc() v CSS: mobilní Safari přepis `animation-duration` přes
+// calc(var(...) * n) ignoroval a pás jel dál původní rychlostí.
+const durationMobile = Math.round(duration / 0.6);
+
 const initials = (name: string) => name.trim().charAt(0).toUpperCase();
 ---
 
@@ -79,7 +84,7 @@ const initials = (name: string) => name.trim().charAt(0).toUpperCase();
   )}
 
   <div class="testi-stage reveal">
-    <ul class="testi-track" style={`--testi-duration:${duration}s`} aria-label="Recenze zákazníků">
+    <ul class="testi-track" style={`--testi-duration:${duration}s;--testi-duration-m:${durationMobile}s`} aria-label="Recenze zákazníků">
       {track.map((review, i) => (
         <li class="testi-item" aria-hidden={i >= items.length ? 'true' : undefined}>
           <blockquote class="testi-card">
@@ -310,8 +315,9 @@ const initials = (name: string) => name.trim().charAt(0).toUpperCase();
 
   @media (max-width: 640px) {
     .testi-item { flex-basis: 78vw; }
-    /* Na mobilu o ~40 % pomalejší posun: rychlost × 0,6 = doba × 1,667. */
-    .testi-track { animation-duration: calc(var(--testi-duration, 45s) * 1.667); }
+    /* Na mobilu o ~40 % pomalejší posun. Celé `animation` znovu (ne jen
+       longhand s calc) — stejný způsob jako u desktopu, který Safari zvládá. */
+    .testi-track { animation: testi-scroll var(--testi-duration-m, 75s) linear infinite; }
     .testi-rating { gap: var(--sp-4); }
     .testi-rating :global(.testi-rating__badge) { width: 72px; }
     .testi-rating__score strong { font-size: 1.9rem; }

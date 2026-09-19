@@ -164,4 +164,15 @@ const mapQuery = encodeURIComponent(
     .contact__grid { grid-template-columns: 1fr; gap: var(--sp-8); }
     .contact-map__frame iframe { height: 320px; }
   }
+
+  /* Mobil: mapa od kraje ke kraji displeje (-24px = boční padding .wrap),
+     bez rámečku a zaoblení, výška ≈ 70 % displeje. */
+  @media (max-width: 640px) {
+    .contact-map__frame {
+      margin-inline: -24px;
+      border-radius: 0;
+      border-inline: 0;
+    }
+    .contact-map__frame iframe { height: 70svh; }
+  }
 </style>

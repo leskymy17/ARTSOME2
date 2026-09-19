@@ -9,7 +9,10 @@
 /* ---------- Reset ---------- */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-html { scroll-behavior: smooth; overflow-x: clip; }
+/* Pozor: na html NEDÁVAT overflow-x (ani clip). Jakmile má html overflow ≠ visible,
+   přestane se overflow z body propagovat na viewport, body se stane scroll
+   kontejnerem a `position: sticky` hlavičky přestane držet (nevrátí se při scrollu nahoru). */
+html { scroll-behavior: smooth; }
 
 body {
   font-family: var(--font-body);
