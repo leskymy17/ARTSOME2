@@ -114,6 +114,8 @@ const { items, href = '/reference/', class: className } = Astro.props;
     /* prostor pro stín/outline při fokusu */
     padding: 2px;
     margin: -2px;
+    /* první fotka zůstane přesně na okraji obsahu (bez 2px posunu od snapu) */
+    scroll-padding-left: 2px;
   }
 
   .refcar__track::-webkit-scrollbar { display: none; }
@@ -159,10 +161,16 @@ const { items, href = '/reference/', class: className } = Astro.props;
 
   @media (max-width: 900px) {
     .refcar__item { flex-basis: calc((100% - 2 * 14px) / 3); }
+
+    /* Pás fotek se vodorovně natahuje až k pravému okraji displeje (−24 px = boční
+       padding .wrap). Šipky nad ním zůstávají zarovnané s textem. */
+    .refcar__track { margin-right: -24px; padding-right: 26px; }
   }
 
   @media (max-width: 640px) {
-    .refcar__item { flex-basis: calc((100% - 14px) / 1.6); }
+    /* Fotky o 25 % větší než dřív ((100 % − 14 px) / 1,6): šířka se odvozuje od
+       okna, ne od pásu — ten je teď širší kvůli přesahu k okraji displeje. */
+    .refcar__item { flex-basis: calc((100vw - 48px - 14px) / 1.28); }
     .refcar__cap { opacity: 1; }
   }
 </style>

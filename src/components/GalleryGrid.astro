@@ -153,6 +153,67 @@ const fullImages = await Promise.all(
     if (e.key === 'ArrowLeft') step(-1);
     if (e.key === 'ArrowRight') step(1);
   });
+
+  // ---- Swipe prstem doleva / doprava (jen dotyková zařízení) ----
+  // Fotka za prstem jede, po pustění se buď přepne na další/předchozí, nebo vrátí.
+  const figure = lb.querySelector<HTMLElement>('.lb__figure')!;
+  const coarse = window.matchMedia('(pointer: coarse)');
+  const SWIPE_MIN = 60; // px, od kterého se tah počítá jako přepnutí
+  let sx = 0;
+  let sy = 0;
+  let dx = 0;
+  let axis: 'x' | 'y' | null = null;
+  let tracking = false;
+
+  const setFigure = (x: number, animate: boolean) => {
+    figure.style.transition = animate ? 'transform .22s ease-out, opacity .22s ease-out' : 'none';
+    figure.style.transform = x ? `translateX(${x}px)` : '';
+    figure.style.opacity = x ? String(1 - Math.min(Math.abs(x) / 320, 0.45)) : '';
+  };
+
+  lb.addEventListener(
+    'touchstart',
+    (e) => {
+      if (!coarse.matches || e.touches.length !== 1) return;
+      // tlačítka (zavřít, šipky) si klepnutí obsluhují sama
+      if ((e.target as HTMLElement).closest('button')) return;
+      sx = e.touches[0].clientX;
+      sy = e.touches[0].clientY;
+      dx = 0;
+      axis = null;
+      tracking = true;
+    },
+    { passive: true },
+  );
+
+  lb.addEventListener(
+    'touchmove',
+    (e) => {
+      if (!tracking) return;
+      dx = e.touches[0].clientX - sx;
+      const dy = e.touches[0].clientY - sy;
+      if (!axis && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+      if (axis === 'x') setFigure(dx, false);
+    },
+    { passive: true },
+  );
+
+  const endSwipe = () => {
+    if (!tracking) return;
+    tracking = false;
+    if (axis === 'x' && Math.abs(dx) > SWIPE_MIN) {
+      const dir = dx < 0 ? 1 : -1; // tah doleva = další fotka
+      step(dir);
+      // nová fotka najede z protější strany
+      setFigure(dir === 1 ? 48 : -48, false);
+      requestAnimationFrame(() => requestAnimationFrame(() => setFigure(0, true)));
+    } else {
+      setFigure(0, true);
+    }
+    axis = null;
+  };
+  lb.addEventListener('touchend', endSwipe, { passive: true });
+  lb.addEventListener('touchcancel', endSwipe, { passive: true });
 </script>
 
 <style>
@@ -318,8 +379,9 @@ const fullImages = await Promise.all(
     .gallery__cap { opacity: 1; } /* na dotykových zařízeních popisek rovnou */
     .lb { padding: 0; }
 
-    /* Fotka na 90 % šířky displeje (výška podle poměru stran, max 70 % výšky). */
-    .lb__figure { width: 90vw; max-width: 90vw; }
+    /* Fotka na 90 % šířky displeje (výška podle poměru stran, max 70 % výšky).
+       touch-action: pan-y — vodorovný tah je náš swipe, ne posun stránky. */
+    .lb__figure { width: 90vw; max-width: 90vw; touch-action: pan-y; }
     .lb__figure img { width: 100%; height: auto; max-height: 70vh; }
 
     /* Šipky u sebe uprostřed dole, mezera mezi nimi 16 px. */

@@ -45,10 +45,11 @@ const track = [...half, ...half];
 // bez ohledu na to, kolik je recenzí (homepage vs. stránka služby).
 const duration = Math.max(half.length * 7, 28);
 
-// Na mobilu o ~40 % pomalejší posun (rychlost × 0,6 = doba ÷ 0,6). Předpočítané
-// tady, ne přes calc() v CSS: mobilní Safari přepis `animation-duration` přes
-// calc(var(...) * n) ignoroval a pás jel dál původní rychlostí.
-const durationMobile = Math.round(duration / 0.6);
+// Na mobilu o ~46 % pomalejší posun (rychlost × 0,54 = doba ÷ 0,54; původně × 0,6,
+// pak o dalších 10 % pomaleji). Předpočítané tady, ne přes calc() v CSS: mobilní
+// Safari přepis `animation-duration` přes calc(var(...) * n) ignoroval. Stejnou
+// dobu používá i JS posun na mobilu (viz skript níže).
+const durationMobile = Math.round(duration / 0.54);
 
 const initials = (name: string) => name.trim().charAt(0).toUpperCase();
 ---
@@ -84,6 +85,7 @@ const initials = (name: string) => name.trim().charAt(0).toUpperCase();
   )}
 
   <div class="testi-stage reveal">
+   <div class="testi-scroll" data-testi-scroll>
     <ul class="testi-track" style={`--testi-duration:${duration}s;--testi-duration-m:${durationMobile}s`} aria-label="Recenze zákazníků">
       {track.map((review, i) => (
         <li class="testi-item" aria-hidden={i >= items.length ? 'true' : undefined}>
@@ -105,6 +107,7 @@ const initials = (name: string) => name.trim().charAt(0).toUpperCase();
         </li>
       ))}
     </ul>
+   </div>
   </div>
 
   <p class="testi-all wrap">
@@ -122,6 +125,110 @@ const initials = (name: string) => name.trim().charAt(0).toUpperCase();
     class="testi-mascot"
   />
 </section>
+
+<script>
+  // Mobil (≤ 640 px): pás recenzí je obyčejný vodorovně posuvný kontejner, který
+  // se sám pomalu posouvá (JS) a dá se přejet prstem doleva i doprava. Na větších
+  // displejích zůstává CSS animace s pauzou při najetí myší.
+  const mobile = window.matchMedia('(max-width: 640px)');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const RESUME_AFTER_MS = 1500; // po doznění prstu / setrvačnosti se posun znovu rozjede
+
+  for (const stage of document.querySelectorAll<HTMLElement>('.testi-stage')) {
+    const scroller = stage.querySelector<HTMLElement>('[data-testi-scroll]');
+    const track = stage.querySelector<HTMLElement>('.testi-track');
+    if (!scroller || !track) continue;
+
+    let raf = 0;
+    let last = 0;
+    let pos = 0;
+    let touching = false;
+    let visible = true;
+    let resumeTimer: number | undefined;
+    let auto = false; // běží automatický posun?
+
+    const half = () => track.scrollWidth / 2; // dvě stejné půlky → smyčka po polovině
+    const seconds = () => parseFloat(track.style.getPropertyValue('--testi-duration-m')) || 75;
+
+    // Nekonečná smyčka: obě půlky vypadají stejně, takže přeskok o polovinu není vidět.
+    const wrap = () => {
+      const h = half();
+      if (!h) return;
+      if (scroller.scrollLeft >= h) scroller.scrollLeft -= h;
+      else if (scroller.scrollLeft < 8) scroller.scrollLeft += h;
+    };
+
+    const frame = (now: number) => {
+      raf = requestAnimationFrame(frame);
+      const dt = Math.min(now - last, 100) / 1000; // ochrana proti skoku po návratu na záložku
+      last = now;
+      if (!auto || touching || !visible) return;
+      // Polohu držíme v desetinných pixelech sami: čtení scrollLeft zpět by ji
+      // zaokrouhlovalo na fyzické pixely a rychlost by se zkreslila.
+      pos += (half() / seconds()) * dt;
+      if (pos >= half()) pos -= half();
+      scroller.scrollLeft = pos;
+    };
+
+    const scheduleResume = () => {
+      window.clearTimeout(resumeTimer);
+      resumeTimer = window.setTimeout(() => {
+        pos = scroller.scrollLeft;
+        auto = !reduceMotion.matches;
+      }, RESUME_AFTER_MS);
+    };
+
+    const onTouchStart = () => {
+      touching = true;
+      auto = false;
+      window.clearTimeout(resumeTimer);
+    };
+    const onTouchEnd = () => {
+      touching = false;
+      scheduleResume(); // ještě dojíždí setrvačnost → scroll události prodlužují čekání
+    };
+    const onScroll = () => {
+      if (!auto) {
+        wrap();
+        if (!touching) scheduleResume();
+      }
+    };
+
+    const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; }, { threshold: 0 });
+
+    const enable = () => {
+      stage.classList.add('is-swipe');
+      // start uprostřed první půlky — na obě strany je dost místa pro swipe
+      scroller.scrollLeft = half() * 0.5;
+      pos = scroller.scrollLeft;
+      auto = !reduceMotion.matches;
+      last = performance.now();
+      raf = requestAnimationFrame(frame);
+      io.observe(stage);
+      scroller.addEventListener('touchstart', onTouchStart, { passive: true });
+      scroller.addEventListener('touchend', onTouchEnd, { passive: true });
+      scroller.addEventListener('touchcancel', onTouchEnd, { passive: true });
+      scroller.addEventListener('scroll', onScroll, { passive: true });
+    };
+
+    const disable = () => {
+      cancelAnimationFrame(raf);
+      window.clearTimeout(resumeTimer);
+      io.disconnect();
+      scroller.removeEventListener('touchstart', onTouchStart);
+      scroller.removeEventListener('touchend', onTouchEnd);
+      scroller.removeEventListener('touchcancel', onTouchEnd);
+      scroller.removeEventListener('scroll', onScroll);
+      stage.classList.remove('is-swipe');
+      scroller.scrollLeft = 0;
+      auto = false;
+    };
+
+    const apply = () => (mobile.matches ? enable() : disable());
+    apply();
+    mobile.addEventListener('change', apply);
+  }
+</script>
 
 <style>
   .testi { background: var(--paper); overflow: hidden; }
@@ -204,6 +311,19 @@ const initials = (name: string) => name.trim().charAt(0).toUpperCase();
     right: 0;
     background: linear-gradient(to left, var(--paper), transparent);
   }
+
+  /* Mobil: posuvný kontejner (overflow-x) — přejetí prstem + automatický posun z JS.
+     Fade okraje (::before/::after) zůstávají na .testi-stage, takže se s obsahem
+     neposouvají. */
+  .testi-stage.is-swipe .testi-scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .testi-stage.is-swipe .testi-scroll::-webkit-scrollbar { display: none; }
+  .testi-stage.is-swipe .testi-track { animation: none; }
 
   .testi-track {
     list-style: none;

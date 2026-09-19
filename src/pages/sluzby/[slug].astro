@@ -257,4 +257,12 @@ const carouselItems = [
     .svc-detail__aside { position: static; }
     .svc-others__grid { grid-template-columns: 1fr; }
   }
+
+  /* Mobil: tlačítko „Prohlédnout naše práce“ pod karuselem přes celou šířku. */
+  @media (max-width: 640px) {
+    .svc-detail__gallery-link :global(.btn) {
+      width: 100%;
+      justify-content: center;
+    }
+  }
 </style>
