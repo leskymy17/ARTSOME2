@@ -1,23 +1,39 @@
 ---
 /**
  * Modré hero podstránek — drobečky + H1 + perex (slot).
- * Volitelně `mascot`: postavička po pas, ukotvená v pravé části hero
- * (jen dekorace, text se před ní zalamuje).
+ * Vpravo je vždy stejná postavička po pas (jen dekorace, text se před ní
+ * zalamuje) — u služeb, referencí, o nás i kontaktu. Jiný obrázek lze předat
+ * přes `mascot`, `mascot={null}` ji vypne.
  */
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import Breadcrumbs from './Breadcrumbs.astro';
+import mascotMalir from '../assets/artsome-maskot-malir.webp';
 
 interface Props {
   title: string;
   crumbs: { label: string; href?: string }[];
-  mascot?: ImageMetadata;
+  mascot?: ImageMetadata | null;
+  /** Podíl šířky postavičky, který text nesmí zasáhnout (0,8 = prázdná levá horní
+   *  část; 1 = postavička s roztaženými rukama až k levému okraji). */
+  mascotClearance?: number;
+  /** Kde v obrázku leží „pas“ jako podíl výšky shora (opasek u malíře ≈ 0,61;
+   *  obrázek oříznutý až u pasu má ≈ 0,85). Podle toho se velikost i poloha
+   *  přizpůsobí, aby hlava byla u všech postaviček stejně velká a stejně vysoko. */
+  mascotWaist?: number;
 }
 
-const { title, crumbs, mascot } = Astro.props;
+const { title, crumbs, mascot = mascotMalir, mascotClearance = 0.8, mascotWaist = 0.61 } = Astro.props;
+
+// Šířka postavičky relativně k výchozí malíři (poměr stran 896 : 1200, pas 0,61)
+// při stejné velikosti hlavy — jiný obrázek tak zabere správné místo a text mu ustoupí.
+const widthFactor = mascot ? 1.339 * (0.61 / mascotWaist) * (mascot.width / mascot.height) : 1;
 ---
 
-<section class:list={['phero', { 'phero--mascot': Boolean(mascot) }]}>
+<section
+  class:list={['phero', { 'phero--mascot': Boolean(mascot) }]}
+  style={`--pm-wfac:${widthFactor.toFixed(3)};--pm-share:${mascotClearance};--pm-waist:${mascotWaist}`}
+>
   {mascot && (
     <Image
       src={mascot}
@@ -78,7 +94,7 @@ const { title, crumbs, mascot } = Astro.props;
     /* Výška postavičky: podle šířky okna (max --pm-w × 1,339), ale nikdy víc, než
        aby hlava ležela aspoň 20 px pod horní hranou hero. Pas (opasek) je asi
        61 % výšky obrázku od shora, proto (výška hero − 20 px) / 0,61. */
-    --h0: min(calc(var(--pm-w) * 1.339), calc((100% - 20px) / .61));
+    --h0: min(calc(var(--pm-w) * 1.339 * .61 / var(--pm-waist, .61)), calc((100% - 20px) / var(--pm-waist, .61)));
     position: absolute;
     z-index: 0;
     /* zarovnáno k pravému okraji obsahu (.wrap má max. šířku a boční padding 24 px) */
@@ -88,7 +104,7 @@ const { title, crumbs, mascot } = Astro.props;
        základ). Spodek obrázku přesahuje pod hero (overflow: hidden ho ořízne). */
     height: calc(var(--h0) * 1.15);
     width: auto;
-    top: calc(100% - var(--h0) * .61 - 16px);
+    top: calc(100% - var(--h0) * var(--pm-waist, .61) - 16px);
     pointer-events: none;
     user-select: none;
   }
@@ -98,9 +114,9 @@ const { title, crumbs, mascot } = Astro.props;
      (šířka je teď až 1,15 × --pm-w). */
   .phero--mascot .phero__title,
   .phero--mascot .phero__lead {
-    max-width: calc(100% - var(--pm-w) * 1.15 * .8 - 16px);
+    max-width: calc(100% - var(--pm-w) * 1.15 * var(--pm-wfac, 1) * var(--pm-share, .8) - 16px);
   }
-  .phero--mascot .phero__lead { max-width: min(60ch, calc(100% - var(--pm-w) * 1.15 * .8 - 16px)); }
+  .phero--mascot .phero__lead { max-width: min(60ch, calc(100% - var(--pm-w) * 1.15 * var(--pm-wfac, 1) * var(--pm-share, .8) - 16px)); }
 
   /* Na telefonech je místa na šířku málo — postavička se skrývá. */
   @media (max-width: 640px) {

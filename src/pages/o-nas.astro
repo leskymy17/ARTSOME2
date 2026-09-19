@@ -5,6 +5,7 @@
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
+import mascotPortfolio from '../assets/artsome-maskot-portfolio.webp';
 import AboutStoryRow from '../components/AboutStoryRow.astro';
 import AreaCoverage from '../components/AreaCoverage.astro';
 import RatingBadges from '../components/RatingBadges.astro';
@@ -16,7 +17,7 @@ import { aboutStories } from '../data/about';
   title="O nás — ARTSOME | Malířství, nátěry a renovace"
   description={`Poznejte ${site.name} — jak jsme začali, jak pracujeme a kde v Moravskoslezském kraji působíme. Hodnocení ${site.rating.firmy.score} na Firmy.cz.`}
 >
-  <PageHero title="O nás" crumbs={[{ label: 'O nás' }]}>
+  <PageHero title="O nás" crumbs={[{ label: 'O nás' }]} mascot={mascotPortfolio} mascotClearance={1}>
     Jsme malíři a natěrači z Havířova. Řemeslu rozumíme od základu a stavíme
     na tom, co je v oboru vzácné — spolehlivost, pořádek a jasná domluva.
   </PageHero>
